@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>M.I.L.L.Y - Sistema Paranormal</title>
+<style>
+  :root{--bg:#0d0d0d;--panel:#1a001a;--accent:#d46cff;--accent-2:#ff66ff;--muted:#bfbfbf;}
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:#eee;background:radial-gradient(ellipse at bottom,#1b2735 0%,#090a0f 100%);overflow-x:hidden}
+  .hidden{display:none!important}
+  .auth-container{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;padding:20px}
+  .auth-container h1{font-size:4rem;color:var(--accent);text-shadow:0 0 10px var(--accent),0 0 20px var(--accent-2);margin-bottom:20px}
+  .auth-box{background:var(--panel);padding:30px;border-radius:15px;width:100%;max-width:400px;border:1px solid #2a0a2a}
+  .auth-box h2{margin-top:0;color:var(--accent-2)}
+  .auth-box input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:1px solid #3a0a3a;background:#0d0d0d;color:#eee;font-size:1rem}
+  .auth-box button{width:100%;padding:12px;margin-top:20px;border:none;border-radius:8px;background:var(--accent);color:#0d0d0d;font-size:1.1rem;font-weight:700;cursor:pointer;transition:transform .2s}
+  .selection-container{padding:20px;max-width:1000px;margin:40px auto}
+  .character-list{display:flex;flex-wrap:wrap;justify-content:center;gap:30px}
+  .character-card{position:relative;width:200px;height:250px;border-radius:15px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:20px;cursor:pointer;overflow:hidden;transition:transform .3s ease,box-shadow .3s ease;border:2px solid transparent;background-size:cover;background-position:center}
+  .character-card:hover{transform:translateY(-10px)}
+  .character-card::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(to top,rgba(0,0,0,0.9) 0%,transparent 50%);z-index:1}
+  .card-name{font-size:1.2rem;font-weight:700;z-index:2;text-shadow:0 0 5px #000,0 0 10px #000}
+  header{background:var(--panel);padding:14px 18px;text-align:center;font-size:20px;color:var(--accent);font-weight:700}
+  .container{max-width:1200px;margin:18px auto;padding:12px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .panel{background:var(--panel);padding:12px;border-radius:12px}
+  h2,h3{color:var(--accent);margin:6px 0 10px 0}
+  input[type=text],input[type=number],textarea,select{width:100%;padding:8px;border-radius:8px;border:none;background:#0d0d0d;color:#eee;margin-top:6px}
+  textarea{min-height:76px; resize: vertical;}
+  .dado-btn{width:36px;height:36px;border-radius:8px;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:700; padding: 4px;}
+  .modal-backdrop{position:fixed;inset:0;display:none;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;z-index:50}
+  .modal{background:#0e0e0e;padding:16px;border-radius:10px;width:90%;border:2px solid rgba(212,108,255,0.12); display: flex; flex-direction: column;}
+  #infoModal .modal, #alteracoesModal .modal, #changelogModal .modal {max-width:800px; height: 80vh;}
+  .generic-modal .modal {max-width:500px; height: auto; max-height: 80vh;}
+  #infoModalContent, #alteracoesModalContent, #changelogModalContent, #addPreMadeList, #initiativeCharsList {flex-grow: 1; overflow-y: auto; background: #0d0d0d; border-radius: 8px; padding: 10px; font-family: 'Courier New', monospace; line-height: 1.6;}
+  #infoModalTextarea{width: 100%; height: 100%; background: #0d0d0d; color: #eee; border: 1px solid #3a0a3a; border-radius: 8px; padding: 10px;}
+  #masterDashboard{padding:20px;max-width:1400px;margin:20px auto; display: grid; grid-template-columns: 3fr 1fr; gap: 20px;}
+  .player-group{background:var(--panel);border-radius:12px;padding:15px;margin-bottom:20px;border-left:4px solid var(--accent)}
+  .player-header{font-size:1.5rem;color:var(--accent-2);cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+  .master-sheet-list{display:none;margin-top:15px;padding-left:20px}
+  .master-sheet-item{display:flex;justify-content:space-between;align-items:center;background:#110011;padding:10px;border-radius:8px;margin-bottom:8px;flex-wrap: wrap; gap: 10px;}
+  .master-right-panel{display: flex; flex-direction: column; gap: 20px;}
+  .master-roll-log, .master-initiative-tracker {background:var(--panel);border-radius:12px;padding:15px; display: flex; flex-direction: column;}
+  #masterLogContainer, #initiativeList {flex-grow: 1; overflow-y: auto; background: #0d0d0d; border-radius: 8px; padding: 10px; font-family: 'Courier New', monospace; font-size: 0.9rem; line-height: 1.4;}
+  #initiativeList li { padding: 5px; border-radius: 4px; list-style-position: inside; }
+  #initiativeList li.active { background-color: var(--accent-2); color: var(--bg); font-weight: bold;}
+  #alteracoesModalContent p { margin: 0 0 8px 0; padding-bottom: 8px; border-bottom: 1px solid #333; }
+  #alteracoesModalContent strong { color: var(--accent-2); }
+  #changelog-icon { position: absolute; top: 20px; right: 20px; font-size: 2.5rem; cursor: pointer; user-select: none; }
+  #changelogModalContent ul { padding-left: 20px; }
+  #changelogModalContent li { margin-bottom: 10px; }
+  #chat-messages { height: 200px; overflow-y: auto; background: #0d0d0d; border-radius: 8px; padding: 10px; margin-bottom: 10px; font-size: 0.9rem;}
+  #chat-messages p { margin: 0 0 8px 0; word-wrap: break-word; }
+  #chat-messages strong { font-family: 'Comic Sans MS', cursive; color: var(--accent-2); }
+  #chat-messages img { max-width: 100%; border-radius: 5px; margin-top: 5px; }
+  .chat-input-area { display: flex; gap: 10px; }
+  #chat-input { flex-grow: 1; margin: 0; }
+  #send-chat-btn, #send-image-btn { width: auto; margin: 0; }
+  .stat-bar-label{display:flex;justify-content:space-between;font-size:14px;margin-bottom:4px;color:var(--muted)}
+  .stat-bar-container{margin-top:10px}
+  .stat-bar{background-color:#0d0d0d;border-radius:8px;padding:2px;height:28px}
+  .stat-bar-inner{height:100%;border-radius:6px;transition:width .5s ease;text-align:center;color:#0d0d0d;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:14px}
+  #vida-bar-inner{background:#c0392b}
+  #sanidade-bar-inner{background:#8e44ad}
+  #esforco-bar-inner{background:#f39c12}
+  #ocultismo-bar-inner{background:#27ae60}
+  .stat-inputs{display:flex;gap:5px;margin-top:4px}
+  .stat-inputs input{width:50%;text-align:center}
+  #nex-bar-container{position:relative;background-color:#0d0d0d;border-radius:8px;height:30px;margin-top:10px;overflow:hidden}
+  #nex-bar-inner{background:linear-gradient(90deg,#2980b9,#3498db);height:100%;width:0%;transition:width .5s ease}
+  #nex-text{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:bold;text-shadow:1px 1px 2px #000}
+  .atributo-row,.pericia-row{display:flex;align-items:center;gap:8px;margin:6px 0}
+  .atributo-row > span.name,.pericia-row > span.name{min-width:130px;color:#ddd}
+  .res-text{min-width:170px;color:var(--accent-2);font-weight:700}
+  .pericia-level{color:#66ccff;margin-left:6px}
+  .controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  button.primary{background:var(--accent);color:#0d0d0d;border:none;padding:8px 10px;border-radius:8px;cursor:pointer;font-weight:700}
+  button.secondary{background:transparent;border:1px solid #3a0a3a;color:var(--muted);padding:8px 10px;border-radius:8px;cursor:pointer}
+  button.danger{background:#c0392b;color:#fff;border:none;padding:8px 10px;border-radius:8px;cursor:pointer}
+  .agent-visuals{display:grid;grid-template-columns:1fr 1fr;gap:15px;align-items:center;text-align:center}
+  .agent-visuals img{display:block;margin:8px auto;border:2px solid var(--accent)}
+  input[type=color]{padding:0;height:30px;width:50px;background:none;border:none;cursor:pointer}
+  .info-tabs{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+  .info-tabs button{flex-grow:1}
+  .form-group { margin-bottom: 10px; } .form-group label { display: block; margin-bottom: 5px; color: var(--muted); }
+  .modal-footer { margin-top: 15px; display: flex; justify-content: flex-end; gap: 10px; }
+  #infoModalButtons { margin-top: 12px; padding-top: 12px; border-top: 1px solid #3a0a3a; display: flex; gap: 8px; }
+  .structured-item { padding: 8px; border-radius: 5px; background-color: #110011; margin-bottom: 5px; white-space: pre-wrap; }
+  .structured-item.item { cursor: pointer; }
+  .structured-item.equipped { border-left: 4px solid var(--accent-2); font-weight: bold; }
+  .pre-made-item { padding: 8px; border-radius: 5px; background-color: #110011; margin-bottom: 5px; cursor: pointer; transition: background-color 0.2s; }
+  .pre-made-item:hover { background-color: #2a0a2a; }
+  .pre-made-item small { color: var(--muted); display: block; margin-top: 4px; white-space: pre-wrap; }
+  #initiativeCharsList label { display: block; padding: 5px; cursor: pointer; }
+  .d20-svg { width: 100%; height: 100%; stroke: var(--accent); transition: transform 0.2s; }
+  .dado-btn:hover .d20-svg { transform: scale(1.1) rotate(15deg); }
+  #dice-display-container { text-align: center; margin-top: 8px; }
+  .dice-display { position: relative; width: 100px; height: 100px; margin: 0 auto; color: var(--accent-2); }
+  .dice-display.rolling .d20-svg { animation: roll-animation 0.5s ease-in-out; }
+  @keyframes roll-animation { 0% { transform: scale(1) rotate(0deg); } 50% { transform: scale(1.2) rotate(180deg); } 100% { transform: scale(1) rotate(360deg); } }
+  .dice-result { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 2.5rem; font-weight: bold; text-shadow: 0 0 5px var(--bg); }
+  #resultadoDadoText { margin-top: 8px; font-size: 1.2rem; color: var(--muted); font-weight: bold; min-height: 1.5em; }
+  @media(max-width:1000px){#masterDashboard{grid-template-columns:1fr}}
+  @media(max-width:800px){.grid{grid-template-columns:1fr}}
+  body.mobile-view .grid { grid-template-columns: 1fr; } 
+  body.mobile-view .character-card { width: 150px; height: 200px; }
+</style>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+</head>
+<body>
+
+<div id="loginScreen" class="auth-container">
+    <div id="changelog-icon" title="Ver Changelog">🗒️</div>
+    <h1>M.I.L.L.Y</h1>
+    <div class="auth-box"><h2>Login</h2><input type="text" id="loginUser" placeholder="Usuário ('mestre' ou seu email)" autocomplete="username"><input type="password" id="loginPass" placeholder="Senha" autocomplete="current-password"><button id="loginButton">Entrar</button><p class="auth-switch" id="switchToRegister">Não tem uma conta? Registre-se</p></div>
+</div>
+<div id="registerScreen" class="auth-container hidden"><h1>M.I.L.L.Y</h1><div class="auth-box"><h2>Registro</h2><input type="email" id="regUser" placeholder="Seu email" autocomplete="email"><input type="password" id="regPass" placeholder="Crie sua senha" autocomplete="new-password"><button id="registerButton">Registrar</button><p class="auth-switch" id="switchToLogin">Já tem uma conta? Faça login</p></div></div>
+<div id="welcomeScreen" class="auth-container hidden"><div class="welcome-message"><p>Bem vindo ao Paranormal, <strong id="welcomeName"></strong>!</p></div></div>
+
+<div id="deviceSelectionScreen" class="auth-container hidden">
+    <div class="auth-box">
+        <h2>Qual o seu dispositivo?</h2>
+        <p>Isso ajudará a otimizar sua experiência.</p>
+        <button id="deviceComputer">🖥️ Computador</button>
+        <button id="deviceMobile" style="margin-top:10px;">📱 Celular</button>
+    </div>
+</div>
+
+<div id="masterDashboard" class="hidden">
+    <div>
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+            <h1 style="color: var(--accent); margin: 0;">Painel do Mestre</h1>
+            <div>
+                <button id="agirJogadoresBtn" class="primary">Agir dos Jogadores</button>
+                <button id="createMesaBtn" class="primary">Criar a Mesa</button>
+                <button id="showAlteracoesBtn" class="secondary">Recentes Alterações</button>
+                <button id="masterLogoutButton" class="secondary">Sair</button>
+            </div>
+        </div>
+        <div style="margin: 20px 0; padding: 10px; background: #110011; border-radius: 8px; text-align: center;">
+            <h3 style="margin-top:0;">Controles Globais de Portrait</h3>
+            <button id="setAllNormalBtn" class="primary">Todos Modo Normal</button>
+            <button id="setAllCombatBtn" class="primary">Todos Modo Combate</button>
+        </div>
+        <p>Visualize abaixo todos os agentes.</p>
+        <div id="masterPlayerList"></div>
+    </div>
+    <div class="master-right-panel">
+        <div class="master-initiative-tracker">
+            <h2 style="margin-top: 0;">Ordem de Ação</h2>
+            <ol id="initiativeList"><p>Nenhuma ordem definida.</p></ol>
+            <div class="controls" style="margin-top: 15px;">
+                <button id="initAvancarJogador" class="primary">Avançar Jogador</button>
+                <button id="initAvancarTurno" class="secondary">Avançar Turno</button>
+                <button id="initTirarJogador" class="danger">Tirar Jogador</button>
+            </div>
+        </div>
+        <div class="master-roll-log">
+            <h2 style="margin-top: 0;">Histórico de Rolagens</h2>
+            <div id="masterLogContainer"><p>Aguardando...</p></div>
+        </div>
+    </div>
+</div>
+
+<div id="playerSelectionScreen" class="hidden">
+    <div class="selection-container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 class="selection-title">Selecione seu Agente</h2>
+            <button id="playerLogoutButton" class="secondary">Sair</button>
+        </div>
+        <div style="text-align: center; margin-bottom: 30px; display: flex; align-items: center; justify-content: center; gap: 15px;">
+             <button id="joinMesaBtn" class="primary" style="padding: 12px 20px; font-size: 1.1rem;">Entrar na Mesa</button>
+             <span style="color: #c0392b; font-weight: bold;">-- Sistema Inativo temporariamente!!</span>
+        </div>
+        <div id="characterList" class="character-list"></div>
+        <div id="noCharMessage" style="text-align:center; display:none;"><p>Nenhuma ficha encontrada.</p><button id="btnCriarPrimeiraFicha" class="primary" style="padding: 12px 20px; font-size: 1.1rem;">CRIE SUA FICHA!</button></div>
+        <div class="selection-footer" style="margin-top: 30px;"><button id="btnCriarOutraFicha" class="secondary" style="display:none;">+ Criar Nova Ficha</button><label class="secondary" style="cursor: pointer; padding: 8px 10px; display: inline-block;">📥 Importar Ficha<input type="file" id="importFile" accept=".json" style="display: none;"></label></div>
+    </div>
+</div>
+
+<div id="appScreen" class="hidden">
+    <header>M.I.L.L.Y - Ficha Interativa</header>
+    <div class="topbar center">
+        <button id="btnPlayer" class="primary">SELEÇÃO DE FICHAS</button>
+        <button id="appLogoutButton" class="secondary">Sair</button>
+    </div>
+    <div class="container">
+      <form id="fichaForm" onsubmit="return false;">
+      <div class="grid">
+        <div>
+          <div class="panel">
+            <h2>Ficha do Personagem</h2>
+            <label>Nome do personagem: <input type="text" id="charName" placeholder="Nome do personagem"></label>
+            <input type="hidden" id="cargaMaxima" value="10">
+            <div class="stat-bar-container"><div class="stat-bar-label"><span>Vida</span><span id="vida-label"></span></div><div class="stat-bar"><div id="vida-bar-inner"></div></div><div class="stat-inputs"><input type="number" id="vida"><input type="number" id="vidaMax"></div></div>
+            <div class="stat-bar-container"><div class="stat-bar-label"><span>Sanidade</span><span id="sanidade-label"></span></div><div class="stat-bar"><div id="sanidade-bar-inner"></div></div><div class="stat-inputs"><input type="number" id="sanidade"><input type="number" id="sanidadeMax"></div></div>
+            <div class="stat-bar-container"><div class="stat-bar-label"><span>Esforço</span><span id="esforco-label"></span></div><div class="stat-bar"><div id="esforco-bar-inner"></div></div><div class="stat-inputs"><input type="number" id="esforco"><input type="number" id="esforcoMax"></div></div>
+            <div class="stat-bar-container"><div class="stat-bar-label"><span>Pontos de Ocultismo</span><span id="ocultismo-label"></span></div><div class="stat-bar"><div id="ocultismo-bar-inner"></div></div><div class="stat-inputs"><input type="number" id="ocultismo"><input type="number" id="ocultismoMax"></div></div>
+            <label style="margin-top: 15px;">Status do Agente: <select id="statusAgente"><option>Acordado</option><option>Ferido</option><option>Traumatizado</option><option>Desmaiado</option></select></label>
+            
+            <label style="margin-top: 15px;">Origem: <select id="origem"></select> </label>
+
+            <div style="margin-top:15px">
+                <div class="stat-bar-label"><span>NEX (%)</span><span id="pontosNEXLabel">0/7</span></div>
+                <div id="nex-bar-container"><div id="nex-bar-inner"></div><div id="nex-text">0%</div></div>
+                <input type="hidden" id="nex" value="0"><input type="hidden" id="pontosNEX" value="0">
+                <button type="button" class="primary" style="width:100%; margin-top: 5px;" onclick="window.aumentarNEX(5)">+5% NEX</button>
+            </div>
+            <div style="margin-top:15px" class="small">
+                <span>Pontos de Perícia</span>: <span id="upPoints">0</span> 
+                <button type="button" class="secondary" style="padding: 2px 6px; margin-left: 10px;" onclick="window.rolarPontosPericia()">Rolar 1d5</button>
+                <input type="hidden" id="periciaPoints" value="0">
+            </div>
+            <div style="margin-top:8px" class="controls">
+              <button id="saveButton" type="button" class="primary">💾 Salvar Ficha</button>
+              <button id="exportButton" type="button" class="secondary">📤 Exportar</button>
+              <button id="deleteButton" type="button" class="danger">🗑️ Apagar Ficha</button>
+            </div>
+          </div>
+          <div id="momentoOrigemPanel" class="panel hidden" style="margin-top:12px; border: 1px solid var(--accent-2);">
+            <h2>Momento da Origem</h2>
+            <div id="momentoOrigemContent"></div>
+          </div>
+          <div class="panel" style="margin-top:12px"><h2>Atributos</h2><div id="atributosList"></div></div>
+          <div class="panel" style="margin-top:12px"><h2>Perícias</h2><div id="periciasList"></div></div>
+        </div>
+        <div>
+          <div class="panel">
+            <h2>Visuais do Agente</h2>
+            <div class="agent-visuals">
+                <div><label>Retrato (Avatar)</label><img id="agente" src="https://placehold.co/200x200/1a001a/d46cff/png?text=Retrato" style="width:100%;max-width:200px;border-radius:10px; object-fit: cover; height: 200px;"><input type="file" accept="image/*" id="agenteUpload"></div>
+                <div><label>Token de Batalha</label><img id="token" src="https://placehold.co/150x150/1a001a/d46cff/png?text=Token" style="width:150px;height:150px;border-radius:10px; object-fit: contain; background-color: #333;"><input type="file" accept="image/*" id="tokenUpload"></div>
+            </div>
+            <label style="margin-top:12px;">Cor: <input type="color" id="charColor" value="#d46cff"></label>
+            <div style="margin-top: 20px;">
+                <h2>Sobre o Agente</h2>
+                <div class="info-tabs">
+                    <button type="button" class="secondary" onclick="window.openInfoModal('anotacoes')">Anotações</button>
+                    <button type="button" class="secondary" onclick="window.openInfoModal('itens')">Itens</button>
+                    <button type="button" class="secondary" onclick="window.openInfoModal('rituais')">Rituais</button>
+                    <button type="button" class="secondary" onclick="window.openInfoModal('combate')">Combate</button>
+                    <button type="button" class="secondary" onclick="window.openInfoModal('enigmas')">Enigmas</button>
+                </div>
+            </div>
+            <textarea id="anotacoes" class="hidden"></textarea><textarea id="itens" class="hidden"></textarea><textarea id="rituais" class="hidden"></textarea><textarea id="combate" class="hidden"></textarea><textarea id="enigmas" class="hidden"></textarea>
+          </div>
+          <div class="panel" style="margin-top:12px">
+            <h2>Role um Dado!</h2>
+            <select id="dadoSelect" style="width:calc(100% - 120px);display:inline-block; vertical-align: middle;"></select>
+            <button class="primary" style="width:110px;display:inline-block; vertical-align: middle;" onclick="window.rolarDadoPersonalizado()">Rolar</button>
+            <div id="dice-display-container">
+                <div class="dice-display" id="main-dice-display">
+                    <span class="dice-result" id="resultadoDadoNum">-</span>
+                </div>
+                <div id="resultadoDadoText">Seu resultado aparecerá aqui.</div>
+            </div>
+          </div>
+           <div class="panel" style="margin-top:12px">
+                <h2>Bate-Papo</h2>
+                <div id="chat-messages"></div>
+                <div class="chat-input-area">
+                    <input type="text" id="chat-input" placeholder="Digite sua mensagem...">
+                    <button id="send-chat-btn" class="primary">Enviar</button>
+                    <label for="send-image-input" id="send-image-btn" class="secondary" title="Enviar Imagem">📷</label>
+                    <input type="file" id="send-image-input" accept="image/*" class="hidden">
+                </div>
+           </div>
+        </div>
+      </div>
+      </form>
+    </div>
+</div>
+
+<!-- Modals -->
+<div id="periciaModal" class="modal-backdrop"><div class="modal"><h3 id="modalTitle">Upar Perícia</h3><div id="modalBody" class="small"></div><div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end"><button class="secondary" onclick="window.fecharModal('periciaModal')">Cancelar</button><button class="danger" id="btnDownOnce" onclick="window.confirmDown()">- Tirar Ponto</button><button class="primary" id="btnUpOnce" onclick="window.confirmUp()">+ Upar Perícia</button></div></div></div>
+<div id="infoModal" class="modal-backdrop"><div class="modal"><h3 id="infoModalTitle"></h3><div id="infoModalContent"><!-- Content here --></div><div id="infoModalButtons"></div><div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end"><button class="secondary" onclick="window.fecharModal('infoModal')">Fechar</button><button class="primary" onclick="window.salvarInfoModal()">Salvar e Fechar</button></div></div></div>
+<div id="alteracoesModal" class="modal-backdrop"><div class="modal"><h3>Alterações Recentes</h3><div id="alteracoesModalContent"><p>Nenhuma alteração...</p></div><div style="margin-top:12px;text-align:right;"><button id="closeAlteracoesModalBtn" class="primary">Fechar</button></div></div></div>
+<div id="changelogModal" class="modal-backdrop"><div class="modal"><h3>Changelog | Versão 3.2.0</h3><div id="changelogModalContent"><ul><li><b>NOVO:</b> A identidade visual dos dados foi atualizada em toda a interface!</li><li><b>NOVO:</b> Sistema de Carga/Peso para o inventário. Carga máxima é definida com 1d12 na criação da ficha.</li><li><b>NOVO:</b> Botão para apagar itens, rituais e habilidades da ficha.</li><li><b>NOVO:</b> Botão para rolar dano automaticamente em itens, rituais e habilidades.</li><li><b>NOVO:</b> Adicionados novos itens (munições) e rituais (Destruição, Apagar Existência, Alterar Memória).</li><li>Sistema de "Agir dos Jogadores" para o Mestre com ordem de iniciativa.</li><li>Retratos (portraits) agora brilham quando é a vez do jogador.</li><li>Adição e Criação de Habilidades, Rituais e Itens diretamente pela ficha.</li></ul></div><div style="margin-top:12px;text-align:right;"><button id="closeChangelogModalBtn" class="primary">Fechar</button></div></div></div>
+
+<div id="initiativeCharsModal" class="modal-backdrop generic-modal"><div class="modal"><h3>Selecionar Jogadores para Agir</h3><div id="initiativeCharsList"></div><div class="modal-footer"><button class="secondary" onclick="window.fecharModal('initiativeCharsModal')">Cancelar</button><button class="primary" id="startInitiativeBtn">Girar Ordem</button></div></div></div>
+<div id="addPreMadeModal" class="modal-backdrop generic-modal"><div class="modal"><h3 id="addPreMadeTitle"></h3><div id="addPreMadeList"></div><div class="modal-footer"><button class="secondary" onclick="window.fecharModal('addPreMadeModal')">Fechar</button></div></div></div>
+<div id="createGenericModal" class="modal-backdrop generic-modal"><div class="modal"><h3 id="createModalTitle"></h3><div id="createModalForm"></div><div class="modal-footer"><button class="secondary" onclick="window.fecharModal('createGenericModal')">Cancelar</button><button class="primary" id="createModalSaveBtn">Criar</button></div></div></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const firebaseConfig = {apiKey:"AIzaSyBdeYnc2yBCtPqPCaK0B45cYZ4jZuxJTzU",authDomain:"fichascp-e9ede.firebaseapp.com",databaseURL:"https://fichascp-e9ede-default-rtdb.firebaseio.com",projectId:"fichascp-e9ede",storageBucket:"fichascp-e9ede.appspot.com",messagingSenderId:"594968881371",appId:"1:594968881371:web:0669ebccac1d8ad48804fe"};
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.database();
+    
+    let currentUser = null;
+    let currentCharacterName = null;
+    let periciaLevels = {};
+    let modalOpenFor = null;
+    let infoModalTargetId = null;
+    let originBonus = {};
+    let tempBonus = { value: 0, type: 'any' };
+
+    const D20_SVG_ICON = `<svg class="d20-svg" viewBox="0 0 100 100"><path d="M50 4 L18 35 L30 75 L70 75 L82 35 Z M50 4 L18 35 M50 4 L82 35 M18 35 L30 75 M82 35 L70 75 M30 75 L70 75 M50 4 L50 45 M18 35 L50 45 M30 75 L50 45 M50 96 L30 75 M50 96 L70 75 M50 45 L50 96 M50 45 L70 75 M50 45 L82 35" stroke="currentColor" fill="none" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
+
+    const ATRIBUTOS = ["determinacao","armas","forca","presenca","agilidade","tecnologia","inteligencia","vigor","sorte"];
+    const PERICIAS = ["Encontrar","Furtividade","Ocultismo","Explodir","Armas","Sanidade","Saude","Alcool","Arrombar","Bater","Brigar","Ouvir","Escutar","Acrobacia","Falsificar","Dispositivos","Dirigir","Atletismo","Agir","Medicina","Reflexos","Sobrevivencia","Enganacao","Psicologia","Intimidar","Labia","Intuicao","Arremessar","AnalisarAmbiente","Tentacao","Sorte","Ciencia","Danca", "Saltar", "Bloquear", "Esquiva", "Exposição ao paranormal"];
+    
+    const PERICIA_ATRIBUTO_MAP = {"Encontrar":"inteligencia","Furtividade":"presenca","Ocultismo":"inteligencia","Explodir":"armas","Armas":"armas","Sanidade":"determinacao","Saude":"determinacao","Alcool":"presenca","Arrombar":"forca","Bater":"forca","Brigar":"forca","Ouvir":"presenca","Escutar":"presenca","Acrobacia":"agilidade","Falsificar":"tecnologia","Dispositivos":"tecnologia","Dirigir":"inteligencia","Atletismo":"forca","Agir":"vigor","Medicina":"inteligencia","Reflexos":"agilidade","Sobrevivencia":"presenca","Enganacao":"inteligencia","Psicologia":"inteligencia","Intimidar":"presenca","Labia":"presenca","Intuicao":"presenca","Arremessar":"forca","AnalisarAmbiente":"presenca","Tentacao":"presenca","Sorte":"sorte","Ciencia":"inteligencia","Danca":"agilidade", "Saltar": "agilidade", "Bloquear": "forca", "Esquiva": "agilidade", "Exposição ao paranormal": "presenca"};
+
+    const ORIGENS = {'nenhum':'Nenhuma','agente_medico':'Agente Médico','lutador':'Lutador','colegial':'Colegial','investigador':'Investigador','defesa_civil':'Defesa-Civil','cientista':'Cientista','sobrevivente':'Sobrevivente','artista_escritor':'Artista (Escritor)','artista_ator':'Artista (Ator)','artista_desenhista':'Artista (Desenhista)','atleta':'Atleta','noia':'Noia'};
+
+    const PRE_MADE_HABILIDADES = {
+        rasgar_corpo: { nome: 'Rasgar corpo', dano: '1d12+5', desc: 'Quando o jogador ter uma arma afiada d10+, ele poderá usar tal habilidade para atravessar o corpo da vítima.', custo: '5 de sanidade e 14 pontos de PE.' },
+        furia: { nome: 'Fúria', dano: '1d10+2', desc: 'Quando o jogador estiver com muita fúria, ele poderá atingir esse modo, assim, o deixando com mais habilidades por 3 turnos do agir. Dando vantagem em testes de força (+15) e o dano caso a pessoa use a mão como arma principal.', custo: '12 pontos de PE e Teste de determinação para saber se desmaia ou não.' },
+        arranhar: { nome: 'Arranhar', dano: '1d4+2', desc: 'Caso o jogador chegue no rosto do atacante com um saltar, ele pode arranhar o rosto do mesmo.', custo: '2 pontos de PE e é necessário MUITO BOM no teste de saltar.' },
+        encrencado: { nome: 'Encrencado', dano: '5d12+10', desc: 'Caso o jogador se encontre numa situação de total injustiça e esteja sem saídas, ele poderá usar isso ao um custo bem longo.', custo: '54 pontos de PE, necessário ter transcendido, necessário mais de 20 de vida, 2 quartos da sanidade, 2 terços da vida.' }
+    };
+    const PRE_MADE_RITUAIS = {
+        desfinhar: { nome: 'Ritual de Desfinhar', dano: '5d20+12', desc: 'Você mutila o corpo da vítima a ponto de desfinhar a carne dela.', custo: '3 quartos do seus pontos de ocultismo, 1d20 de sanidade.' },
+        obliteracao: { nome: 'Ritual de Obliteração', dano: '2d12+10', desc: 'Você oblitera uma pessoa a alcance médio.', custo: '1 terço do seus pontos de ocultismo, 1d12 de sanidade.' },
+        transcender: { nome: 'Ritual de Transcender', dano: 'N/A', desc: 'Você se conecta ao paranormal totalmente, assim, se tornando uma pessoa especial.\nBônus: Da 1.2x a mais de vida a pessoa, 1.3x a mais de sanidade a pessoa e 2.1x de pontos de ocultismo pra pessoa (Além de upar 1 ponto de NEX completamente, porém, não upando sanidade).', custo: 'N/A' },
+        destruicao: { nome: 'Ritual de Destruição', dano: '2d20', desc: 'O jogador se auto destroi para salvar algo.\nBônus: Protege qualquer um de dano a 10 metros.', custo: '10 pontos de ocultismo' },
+        apagar_existencia: { nome: 'Ritual de Apagar existência', dano: '5d20+10', desc: 'Ao usar esse ritual, você escolhe alguém e dá um dano absurdo, apagando a memória de todos que viram ele nos últimos 10 minutos e provavelmente o matando.', custo: '50 pontos de ocultismo' },
+        alterar_memoria: { nome: 'Ritual de Alterar Memória', dano: 'N/A', desc: 'Você altera a memória de um jogador por um termo definido por 1d6, equivalente aos minutos.', custo: '5 de Pontos de Ocultismo', tempo: '1d6' }
+    };
+    const PRE_MADE_ITENS = {
+        pistola: { nome: 'Pistola', dano: '1d6+3', utilidade: 'Arma de fogo.', combate: true, peso: 1.5 },
+        municao_pistola: { nome: 'Munição de pistola', dano: 'N/A', utilidade: 'Pacote com 4 balas.', combate: false, peso: 0.1 },
+        lanterna: { nome: 'Lanterna', dano: 'N/A', utilidade: 'Luminosidade +3', combate: false, peso: 1.2 },
+        rifle: { nome: 'Rifle', dano: '2d6+5', utilidade: 'Arma de fogo de longa distância.', combate: true, peso: 3.2 },
+        municao_rifle: { nome: 'Munição de rifle', dano: 'N/A', utilidade: 'Pacote com 7 balas.', combate: false, peso: 0.4 },
+        faca_pequena: { nome: 'Faca pequena', dano: '1d4+2', utilidade: 'Arma branca de corte.', combate: true, peso: 0.1 },
+        faca_cozinha: { nome: 'Faca de cozinha', dano: '1d4+3', utilidade: 'Arma branca de corte.', combate: true, peso: 0.5 }
+    };
+    
+    const screens = {login: document.getElementById('loginScreen'), register: document.getElementById('registerScreen'), welcome: document.getElementById('welcomeScreen'), device: document.getElementById('deviceSelectionScreen'), master: document.getElementById('masterDashboard'), playerSelection: document.getElementById('playerSelectionScreen'), app: document.getElementById('appScreen')};
+    function showScreen(screenName) { Object.values(screens).forEach(s => s.classList.add('hidden')); if (screens[screenName]) screens[screenName].classList.remove('hidden'); }
+
+    auth.onAuthStateChanged((user) => { currentUser = user; if (!user) showScreen('login'); });
+    
+    function handleLogin() {
+        const emailInput = document.getElementById('loginUser').value, pass = document.getElementById('loginPass').value, masterEmail = "mestre@paranormal.com";
+        const loginEmail = emailInput.toLowerCase() === 'mestre' ? masterEmail : emailInput;
+        auth.signInWithEmailAndPassword(loginEmail, pass)
+            .then(userCred => { showScreen('device'); })
+            .catch(e => alert(`Erro: ${e.message}`));
+    }
+    
+    function proceedToApp(isMaster) {
+        if (isMaster) {
+            loadMasterDashboard();
+        } else {
+            loadPlayerSelection();
+        }
+    }
+    
+    function handleRegister() {
+        const email = document.getElementById('regUser').value, pass = document.getElementById('regPass').value;
+        auth.createUserWithEmailAndPassword(email, pass)
+            .then(userCred => db.ref('users/' + userCred.user.uid).set({ email: userCred.user.email, createdAt: new Date().toISOString() }))
+            .then(() => showWelcomeScreen(email.split('@')[0]))
+            .catch(e => alert(`Erro: ${e.message}`));
+    }
+    
+    function handleLogout() { auth.signOut().catch(e => console.error("Logout Erro:", e)); }
+    function showWelcomeScreen(name) { document.getElementById('welcomeName').textContent = name; showScreen('welcome'); setTimeout(() => showScreen('device'), 3000); }
+    
+    // --- MASTER DASHBOARD ---
+    let initiativeListenerRef = null;
+    function loadMasterDashboard() {
+        showScreen('master');
+        const playerListDiv = document.getElementById('masterPlayerList');
+        playerListDiv.innerHTML = 'Carregando...';
+        
+        db.ref('users').on('value', (snapshot) => {
+            playerListDiv.innerHTML = '';
+            const usersData = snapshot.val();
+            if (!usersData) { playerListDiv.innerHTML = '<p>Nenhum jogador.</p>'; return; }
+            Object.entries(usersData).forEach(([userId, userData]) => {
+                if (userData.email && userData.email.toLowerCase() === 'mestre@paranormal.com') return;
+                const pG = document.createElement('div'); pG.className = 'player-group';
+                const pH = document.createElement('div'); pH.className = 'player-header'; pH.innerHTML = `<span>${userData.email || 'User'}</span><span>▼</span>`;
+                const sL = document.createElement('div'); sL.className = 'master-sheet-list';
+                pH.onclick = () => { sL.style.display = sL.style.display === 'block' ? 'none' : 'block'; pH.innerHTML = `<span>${userData.email}</span><span>${sL.style.display === 'block' ? '▲' : '▼'}</span>`; };
+                if (userData.fichas) {
+                    Object.entries(userData.fichas).forEach(([charName, charData]) => {
+                        const sI = document.createElement('div'); sI.className = 'master-sheet-item';
+                        const sCN = encodeURIComponent(charName).replace(/\./g, '%2E');
+                        sI.innerHTML = `<span><strong>${charName}</strong></span><div><button class="secondary open-portrait" data-user-id="${userId}" data-char-name="${charName}">Portrait</button><button class="secondary" onclick="window.setPortraitMode('${userId}','${sCN}','normal')">Normal</button><button class="secondary" onclick="window.setPortraitMode('${userId}','${sCN}','combate')">Combate</button></div>`;
+                        sL.appendChild(sI);
+                    });
+                } else { sL.innerHTML = '<p>Nenhuma ficha.</p>'; }
+                pG.appendChild(pH); pG.appendChild(sL); playerListDiv.appendChild(pG);
+            });
+        });
+        
+        const logContainer = document.getElementById('masterLogContainer');
+        db.ref('masterLog').limitToLast(50).on('value', (snapshot) => {
+            logContainer.innerHTML = '';
+            if (snapshot.exists()) {
+                const logs = []; snapshot.forEach((child) => { logs.push(child.val()); });
+                logs.reverse().forEach(log => {
+                    const el = document.createElement('p');
+                    el.innerHTML = `[${new Date(log.timestamp).toLocaleTimeString('pt-BR')}] <strong>${log.charName}</strong> rolou ${log.type}: ${log.details}`;
+                    logContainer.appendChild(el);
+                });
+            } else { logContainer.innerHTML = '<p>Sem rolagens.</p>'; }
+        });
+        
+        const alteracoesContainer = document.getElementById('alteracoesModalContent');
+        db.ref('alterationsLog').limitToLast(50).on('value', (snapshot) => {
+            alteracoesContainer.innerHTML = '';
+            if (snapshot.exists()) {
+                const logs = []; snapshot.forEach((child) => { logs.push(child.val()); });
+                logs.reverse().forEach(log => {
+                    const logElement = document.createElement('p');
+                    const timestamp = new Date(log.timestamp).toLocaleString('pt-BR');
+                    logElement.innerHTML = `[${timestamp}] <strong>${log.charName}</strong><br>- ${log.changes.join('<br>- ')}`;
+                    alteracoesContainer.appendChild(logElement);
+                });
+            } else { alteracoesContainer.innerHTML = '<p>Nenhuma alteração recente.</p>'; }
+        });
+        
+        const setAllModes = (mode) => {
+            db.ref('users').once('value').then(snapshot => {
+                if (!snapshot.exists()) return;
+                const users = snapshot.val();
+                for (const userId in users) {
+                    if (users[userId].fichas) {
+                        for (const charName in users[userId].fichas) {
+                            const safeCharName = encodeURIComponent(charName).replace(/\./g, '%2E');
+                            db.ref(`portraits/${userId}/${safeCharName}/mode`).set(mode);
+                        }
+                    }
+                }
+                alert(`Todos os portraits foram alterados para o modo ${mode}!`);
+            });
+        };
+        document.getElementById('setAllNormalBtn').onclick = () => setAllModes('normal');
+        document.getElementById('setAllCombatBtn').onclick = () => setAllModes('combate');
+
+        if(initiativeListenerRef) initiativeListenerRef.off();
+        initiativeListenerRef = db.ref(`initiative/${currentUser.uid}`);
+        initiativeListenerRef.on('value', (snapshot) => {
+            const initiativeList = document.getElementById('initiativeList');
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                initiativeList.innerHTML = '';
+                data.order.forEach((player, index) => {
+                    const li = document.createElement('li');
+                    li.textContent = `${player.charName} (Teste: ${player.roll})`;
+                    if (index === data.currentIndex) {
+                        li.classList.add('active');
+                    }
+                    initiativeList.appendChild(li);
+                });
+            } else {
+                initiativeList.innerHTML = '<p>Nenhuma ordem definida.</p>';
+            }
+        });
+    }
+
+    async function openInitiativeModal() {
+        const listDiv = document.getElementById('initiativeCharsList');
+        listDiv.innerHTML = 'Carregando...';
+        const snapshot = await db.ref('users').once('value');
+        const usersData = snapshot.val();
+        let allChars = [];
+        if (usersData) {
+            Object.entries(usersData).forEach(([userId, userData]) => {
+                if (userData.fichas) {
+                    Object.keys(userData.fichas).forEach(charName => {
+                        allChars.push({ userId, charName });
+                    });
+                }
+            });
+        }
+        listDiv.innerHTML = '';
+        allChars.forEach((char, index) => {
+            listDiv.innerHTML += `<label><input type="checkbox" name="initiativeChar" value="${char.userId}|${char.charName}" id="charCheck${index}"> ${char.charName}</label>`;
+        });
+        document.getElementById('initiativeCharsModal').style.display = 'flex';
+    }
+
+    function startInitiative() {
+        const selectedChars = [];
+        document.querySelectorAll('input[name="initiativeChar"]:checked').forEach(checkbox => {
+            const [userId, charName] = checkbox.value.split('|');
+            const roll = Math.floor(Math.random() * 20) + 1;
+            selectedChars.push({ userId, charName, roll });
+        });
+
+        if (selectedChars.length === 0) {
+            alert("Selecione pelo menos um jogador.");
+            return;
+        }
+
+        selectedChars.sort((a, b) => b.roll - a.roll);
+
+        const initiativeData = {
+            order: selectedChars,
+            currentIndex: 0,
+            turn: 1
+        };
+
+        db.ref(`initiative/${currentUser.uid}`).set(initiativeData);
+        fecharModal('initiativeCharsModal');
+    }
+    
+    window.setPortraitMode = (u, c, m) => db.ref(`portraits/${u}/${c}/mode`).set(m);
+    
+    // --- PLAYER SELECTION & APP ---
+    function loadPlayerSelection() {
+        showScreen('playerSelection');
+        db.ref('chat').off();
+        const lD=document.getElementById('characterList'),nC=document.getElementById('noCharMessage'),cAB=document.getElementById('btnCriarOutraFicha');
+        if(!currentUser)return;
+        db.ref(`users/${currentUser.uid}/fichas`).on('value',s=>{lD.innerHTML='';const f=s.val();if(!f||Object.keys(f).length===0){nC.style.display='block';cAB.style.display='none';}else{nC.style.display='none';cAB.style.display='inline-block';Object.entries(f).forEach(([cN,cD])=>{const card=document.createElement('div');card.className='character-card';card.style.borderColor=cD.charColor||'#d46cff';card.style.backgroundImage=`url('${cD.agente||'https://placehold.co/200x250/1a001a/d46cff/png?text=Agente'}')`;card.innerHTML=`<p class="card-name" style="color:#fff;">${cN}</p>`;card.onclick=()=>showApp(cN);lD.appendChild(card);});}});
+    }
+
+    function showApp(cN){
+        currentCharacterName=cN;
+        showScreen('app');
+        if(cN) {
+            db.ref(`users/${currentUser.uid}/fichas/${cN}`).once('value').then(s=>{if(s.exists())applyFichaToScreen(s.val());});
+            setupChat();
+        } else {
+            resetFichaScreen();
+        }
+    }
+    
+    function readCurrentFichaObject(){
+        const ficha={charName:document.getElementById("charName").value.trim()||"Sem Nome",vida:document.getElementById("vida").value,vidaMax:document.getElementById("vidaMax").value,sanidade:document.getElementById("sanidade").value,sanidadeMax:document.getElementById("sanidadeMax").value,esforco:document.getElementById("esforco").value,esforcoMax:document.getElementById("esforcoMax").value,ocultismo:document.getElementById("ocultismo").value,ocultismoMax:document.getElementById("ocultismoMax").value,nex:document.getElementById("nex").value,pontosNEX: document.getElementById("pontosNEX").value, periciaPoints:document.getElementById("periciaPoints").value,statusAgente:document.getElementById("statusAgente").value,origem:document.getElementById("origem").value,cargaMaxima:document.getElementById("cargaMaxima").value,anotacoes:document.getElementById("anotacoes").value,itens:document.getElementById("itens").value,rituais:document.getElementById("rituais").value,combate:document.getElementById("combate").value,enigmas:document.getElementById("enigmas").value,agente:document.getElementById("agente").src,token:document.getElementById("token").src,charColor:document.getElementById("charColor").value,atributos:{},periciaLevels:periciaLevels};
+        ATRIBUTOS.forEach(a=>ficha.atributos[a]=document.getElementById(a).value);
+        return ficha;
+    }
+
+    function applyFichaToScreen(f){
+        resetFichaScreen();document.getElementById("charName").value=f.charName||'';
+        ['vida','vidaMax','sanidade','sanidadeMax','esforco','esforcoMax','ocultismo','ocultismoMax','nex','pontosNEX','periciaPoints','cargaMaxima'].forEach(s=>{if(f[s]!==undefined)document.getElementById(s).value=f[s];});
+        if(f.statusAgente)document.getElementById("statusAgente").value=f.statusAgente;
+        if(f.origem)document.getElementById("origem").value=f.origem;
+        ['anotacoes','itens','rituais','combate','enigmas'].forEach(id=>{if(f[id])document.getElementById(id).value=f[id];});
+        document.getElementById("agente").src=f.agente||'https://placehold.co/200x200/1a001a/d46cff/png?text=Retrato';document.getElementById("token").src=f.token||'https://placehold.co/150x150/1a001a/d46cff/png?text=Token';
+        if(f.charColor)document.getElementById("charColor").value=f.charColor;if(f.atributos)ATRIBUTOS.forEach(a=>{if(f.atributos[a]!==undefined)document.getElementById(a).value=f.atributos[a];});
+        if(f.periciaLevels)periciaLevels=f.periciaLevels;
+        
+        applyOriginEffects(f.origem || 'nenhum', true);
+        criarPericias();
+        atualizarUpPoints();
+        updateAllBars();
+        atualizarUI_NEX();
+    }
+
+    function resetFichaScreen(){
+        document.getElementById('fichaForm').reset();
+        periciaLevels={}; originBonus={};
+        PERICIAS.forEach(p => periciaLevels[p] = 0);
+        document.getElementById("agente").src="https://placehold.co/200x200/1a001a/d46cff/png?text=Retrato";document.getElementById("token").src="https://placehold.co/150x150/1a001a/d46cff/png?text=Token";document.getElementById("charColor").value="#d46cff";
+        const cargaMaxima = Math.floor(Math.random() * 12) + 1;
+        const d={vida:10,vidaMax:10,sanidade:10,sanidadeMax:10,esforco:2,esforcoMax:2,ocultismo:0,ocultismoMax:0,nex:0,pontosNEX:0,periciaPoints:0, cargaMaxima: cargaMaxima};Object.keys(d).forEach(k=>document.getElementById(k).value=d[k]);
+        ATRIBUTOS.forEach(a=>document.getElementById(a).value=(a==='inteligencia'?10:0));['anotacoes','itens','rituais','combate','enigmas'].forEach(id=>document.getElementById(id).value="");
+        document.getElementById("origem").value = 'nenhum';
+        applyOriginEffects('nenhum');
+        criarPericias();atualizarUpPoints();updateAllBars();atualizarUI_NEX();
+    }
+    
+    function deleteFicha(){if(!currentUser||!currentCharacterName)return;if(confirm(`Apagar "${currentCharacterName}"?`))db.ref(`users/${currentUser.uid}/fichas/${currentCharacterName}`).remove().then(()=>{alert('Apagado.');loadPlayerSelection();});}
+    window.exportFicha=()=>{const f=readCurrentFichaObject(),s=JSON.stringify(f,null,2),b=new Blob([s],{type:"application/json"}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=`${f.charName||'ficha'}.json`;a.click();URL.revokeObjectURL(u);};
+    window.importFicha=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{try{const d=JSON.parse(e.target.result);showApp(null);setTimeout(()=>{applyFichaToScreen(d);alert(`Ficha "${d.charName}" carregada. Salve para adicionar.`);},100);}catch(err){alert("Erro ao ler.");}};r.readAsText(f);e.target.value='';};
+    
+    function updateAllBars(){const uB=(id,c,m)=>{const nC=parseInt(c)||0,nM=parseInt(m)||1,p=Math.max(0,Math.min(100,(nC/nM)*100));document.getElementById(`${id}-bar-inner`).style.width=`${p}%`;document.getElementById(`${id}-label`).textContent=`${nC}/${nM}`;};['vida','sanidade','esforco','ocultismo'].forEach(id=>uB(id,document.getElementById(id).value,document.getElementById(id+'Max').value));atualizarUI_NEX();}
+    
+    function atualizarUI_NEX() {
+        const nex = parseInt(document.getElementById('nex').value) || 0;
+        const pontosNEX = parseInt(document.getElementById('pontosNEX').value) || 0;
+        document.getElementById('nex-bar-inner').style.width = `${nex}%`;
+        document.getElementById('nex-text').textContent = `${nex}%`;
+        document.getElementById('pontosNEXLabel').textContent = `${pontosNEX}/7`;
+    }
+    
+    window.aumentarNEX = (valor) => {
+        const nexInput = document.getElementById('nex'), pontosNexInput = document.getElementById('pontosNEX');
+        let pontosNEX = parseInt(pontosNexInput.value) || 0;
+        if (pontosNEX >= 7) { alert("NEX máximo (7) atingido!"); nexInput.value = 100; atualizarUI_NEX(); return; }
+        let nexAtual = parseInt(nexInput.value) || 0;
+        nexAtual += valor;
+        if (nexAtual >= 100) {
+            pontosNEX++; nexAtual -= 100;
+            pontosNexInput.value = pontosNEX; nexInput.value = nexAtual;
+            aplicarBonusLevelUp(); rolarPontosPericia(true);
+            alert(`LEVEL UP! Você atingiu ${pontosNEX} de NEX! Atributos aumentados e novos pontos de perícia recebidos!`);
+        } else { nexInput.value = nexAtual; }
+        atualizarUI_NEX(); updateAllBars();
+    };
+
+    function aplicarBonusLevelUp() {
+        const vM=document.getElementById('vidaMax'),sM=document.getElementById('sanidadeMax'),eM=document.getElementById('esforcoMax'),oM=document.getElementById('ocultismoMax');
+        vM.value=Math.round((parseInt(vM.value)||0)*1.6);sM.value=Math.round((parseInt(sM.value)||0)*2.4);eM.value=Math.round((parseInt(eM.value)||0)*1.6);oM.value=Math.round((parseInt(oM.value)||0)*3.5);
+        document.getElementById('vida').value=vM.value;document.getElementById('sanidade').value=sM.value;
+    }
+    
+    function atualizarUpPoints(){document.getElementById("upPoints").textContent=document.getElementById("periciaPoints").value||0;}
+    
+    window.rolarPontosPericia = (silencioso = false) => {
+        const roll = Math.floor(Math.random()*5)+1, ptsInput=document.getElementById("periciaPoints");
+        ptsInput.value = (parseInt(ptsInput.value)||0)+roll;
+        atualizarUpPoints();
+        if (!silencioso) alert(`Você rolou ${roll}! Pontos de perícia adicionados.`);
+    };
+    
+    function criarAtributos(){const d=document.getElementById("atributosList");d.innerHTML="";ATRIBUTOS.forEach(a=>{const r=document.createElement("div");r.className="atributo-row";r.innerHTML=`<span class="name">${a.charAt(0).toUpperCase()+a.slice(1)}:</span><input type="number" id="${a}" value="0" min="0" max="85"><div class="dado-btn" onclick="window.rolarAtributo('${a}')">${D20_SVG_ICON}</div><div id="res-${a}" class="res-text">-</div>`;d.appendChild(r);});}
+    function criarPericias(){
+        const div = document.getElementById("periciasList"); div.innerHTML = "";
+        PERICIAS.forEach(p=>{
+            const row = document.createElement("div"); row.className = "pericia-row";
+            const level = periciaLevels[p] || 0;
+            const bonus = originBonus[p] || 0;
+            const totalBonus = (level * 5) + bonus;
+            const levelText = totalBonus > 0 ? `(+${totalBonus})` : "";
+            row.innerHTML = `<span class="name pericia-name" style="cursor:pointer;" onclick="window.abrirModalUp('${p}')">${p}</span><div class="dado-btn" onclick="window.rolarPericia('${p}')">${D20_SVG_ICON}</div><div id="res-${p}" class="res-text">-</div><span class="pericia-level">${levelText}</span>`;
+            div.appendChild(row);
+        });
+    }
+    
+    const resultadoTexto=(r,v)=>{if(r===1)return"Desastre";if(r<=Math.floor(v/2))return"Fracasso";if(r<=v)return"Normal";if(r<=v+20)return"Bom";if(r<=95)return"Muito Bom";return"Extremo";};
+    
+    function enviarRolagem(t,r,res,b){if(!currentUser||!currentCharacterName)return;const cN=document.getElementById('charName').value.trim(),sN=encodeURIComponent(currentCharacterName).replace(/\./g,'%2E');db.ref(`portraits/${currentUser.uid}/${sN}/lastRoll`).set({roll:r,result:res,timestamp:Date.now()});db.ref('masterLog').push({charName:cN,type:t,details:`🎲${r} vs ${b} ➜ ${res}`,timestamp:Date.now()});}
+    
+    function animateAndShowRoll(num, text) {
+        const diceContainer = document.getElementById('main-dice-display');
+        const numEl = document.getElementById('resultadoDadoNum');
+        const textEl = document.getElementById('resultadoDadoText');
+        
+        diceContainer.classList.remove('rolling'); // reset animation
+        void diceContainer.offsetWidth; // trigger reflow
+        diceContainer.classList.add('rolling');
+        numEl.textContent = '?';
+        textEl.textContent = 'Rolando...';
+        
+        setTimeout(() => {
+            numEl.textContent = num;
+            textEl.textContent = text;
+            diceContainer.classList.remove('rolling');
+        }, 500);
+    }
+
+    window.rolarAtributo=a=>{let v=parseInt(document.getElementById(a).value)||0;if(tempBonus.type==='any'||tempBonus.type===a){v+=tempBonus.value;}const b=Math.round(v*2.0),r=Math.floor(Math.random()*100)+1,res=resultadoTexto(r,b);document.getElementById(`res-${a}`).textContent=`🎲 ${r} -> ${res}` + (tempBonus.value > 0 ? ' (Bônus aplicado!)' : '');enviarRolagem(`Atributo (${a})`,r,res,b);tempBonus={value:0,type:'any'};};
+    window.rolarPericia=p=>{const m=PERICIA_ATRIBUTO_MAP;let aV=parseInt(document.getElementById(m[p]||"sorte").value)||0;if(tempBonus.type==='any'||tempBonus.type===(m[p]||"sorte")||tempBonus.type===p){aV+=tempBonus.value;}const b=Math.round(aV*2.0),r=Math.floor(Math.random()*100)+1,l=(periciaLevels[p]||0)*5,oB=(originBonus[p]||0),fR=Math.min(r+l+oB,100),res=resultadoTexto(fR,b);document.getElementById(`res-${p}`).textContent=`🎲 ${fR} -> ${res}` + (tempBonus.value > 0 ? ' (Bônus aplicado!)' : '');enviarRolagem(`Perícia (${p})`,fR,res,b);tempBonus={value:0,type:'any'};};
+    window.rolarDadoPersonalizado=()=>{const s=document.getElementById('dadoSelect').value,r=Math.floor(Math.random()*s)+1;animateAndShowRoll(r,`Resultado: ${r}`);enviarRolagem(`Dado (d${s})`,r,`Rolou ${r}`,s);}
+    
+    window.rollDamage = (damageString) => {
+        if (!damageString || typeof damageString !== 'string') return;
+        const regex = /(\d+)d(\d+)(?:\s*\+\s*(\d+))?/;
+        const match = damageString.match(regex);
+        if (!match) {
+            animateAndShowRoll('!', `Formato inválido: ${damageString}`);
+            return;
+        }
+        const numDice = parseInt(match[1]);
+        const diceSides = parseInt(match[2]);
+        const modifier = parseInt(match[3]) || 0;
+
+        let totalRoll = 0;
+        let rolls = [];
+        for (let i = 0; i < numDice; i++) {
+            const roll = Math.floor(Math.random() * diceSides) + 1;
+            rolls.push(roll);
+            totalRoll += roll;
+        }
+        const finalResult = totalRoll + modifier;
+        
+        animateAndShowRoll(finalResult, `Dano: ${finalResult} (${rolls.join('+')}${modifier > 0 ? `+${modifier}`: ''})`);
+        enviarRolagem(`Dano (${damageString})`, finalResult, `${finalResult} de dano!`, `Base: ${totalRoll} + Mod: ${modifier}`);
+    };
+
+    window.abrirModalUp=p=>{modalOpenFor=p;const aP=parseInt(document.getElementById("periciaPoints").value)||0,cL=periciaLevels[p]||0;document.getElementById("modalTitle").textContent=`Gerenciar ${p}`;document.getElementById("modalBody").innerHTML=`Pts: <b>${aP}</b><br>Nível: <b>${cL}</b> (+${cL*5}).`;document.getElementById("btnUpOnce").style.display=aP>=1?'inline-block':'none';document.getElementById("btnDownOnce").style.display=cL>0?'inline-block':'none';document.getElementById("periciaModal").style.display="flex";};
+    window.fecharModal=id=>document.getElementById(id).style.display="none";
+    window.confirmUp=()=>{if(!modalOpenFor)return;const aP=parseInt(document.getElementById("periciaPoints").value)||0;if(aP<1){alert("Sem pontos.");return;}periciaLevels[modalOpenFor]=(periciaLevels[modalOpenFor]||0)+1;document.getElementById("periciaPoints").value=aP-1;criarPericias();atualizarUpPoints();window.fecharModal('periciaModal');};
+    window.confirmDown=()=>{if(!modalOpenFor)return;const cL=periciaLevels[modalOpenFor]||0;if(cL<=0)return;const aP=parseInt(document.getElementById("periciaPoints").value)||0;periciaLevels[modalOpenFor]=cL-1;document.getElementById("periciaPoints").value=aP+1;criarPericias();atualizarUpPoints();window.fecharModal('periciaModal');};
+    
+    const toBase64=f=>new Promise((res,rej)=>{const r=new FileReader();r.readAsDataURL(f);r.onload=()=>res(r.result);r.onerror=e=>rej(e);});
+    
+    function logAlteracoes(antiga, nova) { /* ...código da função... */ }
+
+    function saveFicha() {
+        if (!currentUser) return;
+        let charName = document.getElementById('charName').value.trim();
+        if (!charName) { alert('Dê um nome ao personagem.'); return; }
+        
+        const fichaRef = db.ref(`users/${currentUser.uid}/fichas/${charName}`);
+        const novaFichaData = readCurrentFichaObject();
+
+        fichaRef.once('value').then((snapshot) => {
+            if (snapshot.exists()) { logAlteracoes(snapshot.val(), novaFichaData); }
+            if (currentCharacterName && currentCharacterName !== charName) {
+                db.ref(`users/${currentUser.uid}/fichas/${currentCharacterName}`).remove();
+            }
+            currentCharacterName = charName;
+            fichaRef.set(novaFichaData)
+                .then(() => { alert(`Ficha "${charName}" salva!`); loadPlayerSelection(); })
+                .catch(e => alert(`Erro: ${e.message}`));
+        });
+    }
+
+    function setupChat() {
+        const chatMessages = document.getElementById('chat-messages');
+        chatMessages.innerHTML = '';
+        const chatRef = db.ref('chat').limitToLast(50);
+
+        chatRef.on('child_added', (snapshot) => {
+            const msg = snapshot.val();
+            const p = document.createElement('p');
+            if (msg.text) {
+                p.innerHTML = `<strong>${msg.sender}:</strong> ${msg.text}`;
+            } else if (msg.imageUrl) {
+                p.innerHTML = `<strong>${msg.sender}:</strong><br><img src="${msg.imageUrl}" alt="Imagem enviada">`;
+            }
+            chatMessages.appendChild(p);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        });
+    }
+
+    function sendChatMessage() {
+        const chatInput = document.getElementById('chat-input');
+        const message = chatInput.value.trim();
+        const charName = document.getElementById('charName').value.trim() || "Agente";
+
+        if (message) {
+            db.ref('chat').push({
+                sender: charName,
+                text: message,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            });
+            chatInput.value = '';
+        }
+    }
+
+    function applyOriginEffects(originId, isLoading = false) {
+        if (!isLoading) {
+            const d={vidaMax:10,sanidadeMax:10,esforcoMax:2};
+            Object.keys(d).forEach(k=>document.getElementById(k).value=d[k]);
+            document.getElementById('itens').value = '';
+        }
+
+        originBonus = {};
+        const momentoPanel = document.getElementById('momentoOrigemPanel');
+        momentoPanel.classList.add('hidden');
+        momentoPanel.innerHTML = '<h2>Momento da Origem</h2>';
+
+        switch(originId) {
+            case 'agente_medico': if(!isLoading) document.getElementById('sanidadeMax').value = 13; originBonus['Medicina'] = 5; originBonus['Intuição'] = 5; break;
+            case 'lutador': if(!isLoading) { document.getElementById('vidaMax').value = 17; document.getElementById('esforcoMax').value = 12; } originBonus['Bater'] = 5; originBonus['Brigar'] = 5; break;
+            case 'colegial': if(!isLoading) { document.getElementById('sanidadeMax').value = 12; document.getElementById('itens').value = 'Mochila (+5 de Carga)\nPeso: 0\n\n'; } originBonus['Intuição'] = 5; originBonus['Lábia'] = 5; break;
+            case 'investigador': originBonus['Encontrar'] = 5; originBonus['AnalisarAmbiente'] = 5; break;
+            case 'defesa_civil': if(!isLoading) document.getElementById('itens').value = 'Revolver (Dano: 1d6+3)\nPeso: 1.5\n\n3x Pacotes de Bala (4 balas cada)\nPeso: 0.3\n\n'; originBonus['Brigar'] = 5; break;
+            case 'cientista': originBonus['Ciência'] = 5; originBonus['Sobrevivência'] = 5; break;
+            case 'sobrevivente': originBonus['Sobrevivência'] = 15; originBonus['Intuição'] = 5; if(!isLoading) document.getElementById('itens').value = 'Itens de acampamento\nPeso: 2\n\n'; break;
+            case 'artista_escritor': originBonus['Intuição'] = 15; originBonus['Enganação'] = 5; break;
+            case 'artista_ator': originBonus['Dança'] = 15; originBonus['Acrobacia'] = 5; break;
+            case 'artista_desenhista': originBonus['Enganação'] = 15; originBonus['Tentação'] = 5; break;
+            case 'atleta':
+                originBonus['Brigar'] = 5; originBonus['Atletismo'] = 5;
+                momentoPanel.classList.remove('hidden');
+                momentoPanel.innerHTML += '<button id="forcaPlusBtn" class="primary">Usar Força+ (-10 Esforço)</button><p>Gaste 10 de Esforço para ganhar +15 no seu próximo teste.</p>';
+                document.getElementById('forcaPlusBtn').onclick = () => {
+                    const esforco = document.getElementById('esforco');
+                    if (parseInt(esforco.value) >= 10) { esforco.value -= 10; tempBonus = {value: 15, type: 'any'}; alert('Força+ ativado! Seu próximo teste terá +15.'); updateAllBars(); }
+                    else { alert('Pontos de Esforço insuficientes!'); }
+                };
+                break;
+            case 'noia':
+                originBonus['Enganação'] = 15; originBonus['Furtividade'] = 5;
+                momentoPanel.classList.remove('hidden');
+                momentoPanel.innerHTML += '<button id="fugaBtn" class="primary">Usar Fuga (-10 Esforço)</button><p>Gaste 10 de Esforço para ganhar +25 no seu próximo teste de Agilidade ou Acrobacia.</p>';
+                document.getElementById('fugaBtn').onclick = () => {
+                    const esforco = document.getElementById('esforco');
+                    if (parseInt(esforco.value) >= 10) { esforco.value -= 10; tempBonus = {value: 25, type: 'agilidade'}; alert('Fuga ativada! Seu próximo teste de Agilidade ou Acrobacia terá +25.'); updateAllBars(); }
+                    else { alert('Pontos de Esforço insuficientes!'); }
+                };
+                break;
+        }
+        if (!isLoading) updateAllBars();
+        criarPericias();
+    }
+    
+    function renderStructuredView(container, text, type) {
+        container.innerHTML = '';
+        const entries = text.split('\n\n').filter(e => e.trim() !== '');
+        
+        if (type === 'itens') {
+            const cargaMax = parseFloat(document.getElementById('cargaMaxima').value) || 0;
+            let cargaAtual = 0;
+            const weightRegex = /Peso:\s*([\d\.]+)/i;
+            entries.forEach(entry => {
+                const match = entry.match(weightRegex);
+                if (match && match[1]) {
+                    cargaAtual += parseFloat(match[1]);
+                }
+            });
+            const header = document.createElement('div');
+            header.style.textAlign = 'center';
+            header.style.marginBottom = '10px';
+            header.style.paddingBottom = '10px';
+            header.style.borderBottom = '1px solid var(--accent)';
+            header.innerHTML = `<strong>Carga: ${cargaAtual.toFixed(1)} / ${cargaMax}</strong>`;
+            container.appendChild(header);
+        }
+
+        if (entries.length === 0) {
+            container.innerHTML += `<p style="text-align: center; color: var(--muted);">Nenhum ${type === 'combate' ? 'habilidade' : type} encontrado.</p>`;
+            return;
+        }
+        
+        entries.forEach((entryText) => {
+            const entryDiv = document.createElement('div');
+            entryDiv.className = 'structured-item';
+            
+            let isEquipped = false;
+            let cleanText = entryText;
+
+            if (type === 'itens') {
+                entryDiv.classList.add('item');
+                if (entryText.startsWith('* ')) {
+                    isEquipped = true;
+                    cleanText = entryText.substring(2);
+                    entryDiv.classList.add('equipped');
+                }
+                entryDiv.ondblclick = () => {
+                    entryDiv.classList.toggle('equipped');
+                };
+            }
+            
+            const content = document.createElement('span');
+            content.textContent = cleanText;
+            
+            const controls = document.createElement('div');
+            controls.style.marginTop = '8px';
+            controls.style.textAlign = 'right';
+
+            const damageRegex = /Dano:\s*(\d+d\d+(?:\s*\+\s*\d+)?)/i;
+            const damageMatch = entryText.match(damageRegex);
+            if (damageMatch && damageMatch[1]) {
+                const rollBtn = document.createElement('button');
+                rollBtn.className = 'primary';
+                rollBtn.textContent = '🎲 Rolar Dano';
+                rollBtn.style.padding = '4px 8px';
+                rollBtn.style.fontSize = '0.8rem';
+                rollBtn.onclick = () => window.rollDamage(damageMatch[1]);
+                controls.appendChild(rollBtn);
+            }
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'danger';
+            deleteBtn.textContent = 'Apagar';
+            deleteBtn.style.marginLeft = '8px';
+            deleteBtn.style.padding = '4px 8px';
+            deleteBtn.style.fontSize = '0.8rem';
+            deleteBtn.onclick = (e) => {
+                e.target.closest('.structured-item').remove();
+            };
+            controls.appendChild(deleteBtn);
+            
+            entryDiv.appendChild(content);
+            entryDiv.appendChild(controls);
+            container.appendChild(entryDiv);
+        });
+    }
+
+    window.openInfoModal = (type) => {
+        infoModalTargetId = type;
+        const contentDiv = document.getElementById('infoModalContent');
+        const buttonsDiv = document.getElementById('infoModalButtons');
+        const titleEl = document.getElementById('infoModalTitle');
+        contentDiv.innerHTML = '';
+        buttonsDiv.innerHTML = '';
+
+        const titles = {'anotacoes':'Anotações','itens':'Inventário','rituais':'Rituais','combate':'Habilidades de Combate','enigmas':'Enigmas'};
+        titleEl.textContent = titles[type] || 'Info';
+        
+        const targetTextarea = document.getElementById(type);
+
+        if (type === 'itens' || type === 'rituais' || type === 'combate') {
+            buttonsDiv.innerHTML = `<button class="primary" onclick="openAddPreMadeModal('${type}')">Adicionar ${type === 'combate' ? 'Habilidade' : (type === 'rituais' ? 'Ritual' : 'Item')}</button>
+                                  <button class="secondary" onclick="openCreateModal('${type}')">Criar ${type === 'combate' ? 'Habilidade' : (type === 'rituais' ? 'Ritual' : 'Item')}</button>`;
+            renderStructuredView(contentDiv, targetTextarea.value, type);
+        } else {
+            const textarea = document.createElement('textarea');
+            textarea.id = 'infoModalTextarea';
+            textarea.value = targetTextarea.value;
+            contentDiv.appendChild(textarea);
+        }
+        
+        document.getElementById('infoModal').style.display='flex';
+    };
+
+    window.salvarInfoModal = () => {
+        if (!infoModalTargetId) return;
+        const targetTextarea = document.getElementById(infoModalTargetId);
+        
+        if (infoModalTargetId === 'itens' || infoModalTargetId === 'combate' || infoModalTargetId === 'rituais') {
+            let newContent = [];
+            document.querySelectorAll('#infoModalContent .structured-item').forEach(itemDiv => {
+                const text = itemDiv.querySelector('span').textContent;
+                let final_text = text;
+                if(infoModalTargetId === 'itens' && itemDiv.classList.contains('equipped')){
+                    final_text = '* ' + text;
+                }
+                newContent.push(final_text);
+            });
+            targetTextarea.value = newContent.join('\n\n');
+        } else {
+            targetTextarea.value = document.getElementById('infoModalTextarea').value;
+        }
+        
+        window.fecharModal('infoModal');
+        infoModalTargetId = null;
+    };
+    
+    window.openAddPreMadeModal = (type) => {
+        const listDiv = document.getElementById('addPreMadeList');
+        const titleEl = document.getElementById('addPreMadeTitle');
+        listDiv.innerHTML = '';
+        let source;
+        
+        if (type === 'combate') {
+            titleEl.textContent = 'Adicionar Habilidade';
+            source = PRE_MADE_HABILIDADES;
+        } else if (type === 'rituais') {
+            titleEl.textContent = 'Adicionar Ritual';
+            source = PRE_MADE_RITUAIS;
+        } else {
+            titleEl.textContent = 'Adicionar Item';
+            source = PRE_MADE_ITENS;
+        }
+
+        Object.entries(source).forEach(([key, value]) => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'pre-made-item';
+            let desc = value.desc || value.utilidade;
+            if(type === 'itens') desc += `\nPeso: ${value.peso}`;
+            itemDiv.innerHTML = `<strong>${value.nome}</strong><small>Dano: ${value.dano || 'N/A'}\n${desc}</small>`;
+            itemDiv.onclick = () => addPreMadeItem(type, key);
+            listDiv.appendChild(itemDiv);
+        });
+        
+        document.getElementById('addPreMadeModal').style.display = 'flex';
+    }
+
+    function addPreMadeItem(type, key) {
+        let source, itemString = '';
+        const targetTextarea = document.getElementById(infoModalTargetId);
+
+        if (type === 'combate') {
+            source = PRE_MADE_HABILIDADES;
+            const item = source[key];
+            itemString = `Nome: ${item.nome}\nDano: ${item.dano}\nDescrição: ${item.desc}\nCusto: ${item.custo}`;
+        } else if (type === 'rituais') {
+            source = PRE_MADE_RITUAIS;
+            const item = source[key];
+            itemString = `Nome: ${item.nome}\nDano: ${item.dano || 'N/A'}\nDescrição: ${item.desc}\nCusto: ${item.custo}`;
+        } else {
+            source = PRE_MADE_ITENS;
+            const item = source[key];
+            itemString = `${item.nome}${item.combate ? ` (Dano: ${item.dano})` : ''}\nUtilidade: ${item.utilidade}\nPeso: ${item.peso}`;
+        }
+        
+        const currentText = targetTextarea.value;
+        targetTextarea.value = currentText + (currentText ? '\n\n' : '') + itemString;
+        
+        renderStructuredView(document.getElementById('infoModalContent'), targetTextarea.value, infoModalTargetId);
+        fecharModal('addPreMadeModal');
+    }
+
+    window.openCreateModal = (type) => {
+        const formDiv = document.getElementById('createModalForm');
+        const titleEl = document.getElementById('createModalTitle');
+        formDiv.innerHTML = '';
+        let formHTML = '';
+
+        if (type === 'combate') {
+            titleEl.textContent = 'Criar Habilidade';
+            formHTML = `<div class="form-group"><label for="createNome">Nome da Habilidade:</label><input type="text" id="createNome"></div>
+                        <div class="form-group"><label for="createDano">Dano (ex: 1d12+5):</label><input type="text" id="createDano"></div>
+                        <div class="form-group"><label for="createCusto">Custo:</label><input type="text" id="createCusto"></div>
+                        <div class="form-group"><label for="createDesc">Descrição:</label><textarea id="createDesc"></textarea></div>`;
+        } else if (type === 'rituais') {
+            titleEl.textContent = 'Criar Ritual';
+            formHTML = `<div class="form-group"><label for="createNome">Nome do Ritual:</label><input type="text" id="createNome"></div>
+                        <div class="form-group"><label for="createDano">Dano (ex: 5d20+12):</label><input type="text" id="createDano"></div>
+                        <div class="form-group"><label for="createCusto">Custo:</label><input type="text" id="createCusto"></div>
+                        <div class="form-group"><label for="createDesc">Descrição:</label><textarea id="createDesc"></textarea></div>`;
+        } else { // Itens
+            titleEl.textContent = 'Criar Item';
+            formHTML = `<div class="form-group"><label for="createNome">Nome do Item:</label><input type="text" id="createNome"></div>
+                        <div class="form-group"><label for="createUtil">Utilidade:</label><input type="text" id="createUtil"></div>
+                        <div class="form-group"><label for="createPeso">Peso:</label><input type="number" id="createPeso" step="0.1" value="0"></div>
+                        <div class="form-group"><label>Combate?</label><select id="createCombate"><option value="nao">Não</option><option value="sim">Sim</option></select></div>
+                        <div id="danoSection" class="form-group hidden"><label for="createDano">Dano:</label><input type="text" id="createDano"></div>
+                        <div class="form-group"><label for="createDesc">Descrição:</label><textarea id="createDesc"></textarea></div>`;
+        }
+        formDiv.innerHTML = formHTML;
+        
+        if (type === 'itens') {
+            document.getElementById('createCombate').onchange = (e) => {
+                document.getElementById('danoSection').classList.toggle('hidden', e.target.value === 'nao');
+            };
+        }
+        
+        document.getElementById('createModalSaveBtn').onclick = () => createItem(type);
+        document.getElementById('createGenericModal').style.display = 'flex';
+    }
+
+    function createItem(type) {
+        let itemString = '';
+        const nome = document.getElementById('createNome').value;
+        if (!nome) { alert('O nome é obrigatório.'); return; }
+        
+        if (type === 'combate' || type === 'rituais') {
+            const dano = document.getElementById('createDano').value;
+            const custo = document.getElementById('createCusto').value;
+            const desc = document.getElementById('createDesc').value;
+            itemString = `Nome: ${nome}\nDano: ${dano || 'N/A'}\nDescrição: ${desc || 'N/A'}\nCusto: ${custo || 'N/A'}`;
+        } else {
+            const util = document.getElementById('createUtil').value;
+            const peso = document.getElementById('createPeso').value;
+            const combate = document.getElementById('createCombate').value === 'sim';
+            const dano = combate ? document.getElementById('createDano').value : 'N/A';
+            const desc = document.getElementById('createDesc').value;
+            itemString = `${nome}${combate ? ` (Dano: ${dano})` : ''}\nUtilidade: ${util}\nDescrição: ${desc}\nPeso: ${peso}`;
+        }
+        
+        const targetTextarea = document.getElementById(infoModalTargetId);
+        const currentText = targetTextarea.value;
+        targetTextarea.value = currentText + (currentText ? '\n\n' : '') + itemString;
+        
+        renderStructuredView(document.getElementById('infoModalContent'), targetTextarea.value, infoModalTargetId);
+        fecharModal('createGenericModal');
+    }
+    
+    // --- EVENT LISTENERS ---
+    document.getElementById('deviceComputer').addEventListener('click', () => {
+        document.body.classList.remove('mobile-view');
+        proceedToApp(auth.currentUser.email.toLowerCase() === 'mestre@paranormal.com');
+    });
+    document.getElementById('deviceMobile').addEventListener('click', () => {
+        document.body.classList.add('mobile-view');
+        proceedToApp(auth.currentUser.email.toLowerCase() === 'mestre@paranormal.com');
+    });
+
+    document.getElementById('switchToRegister').addEventListener('click',()=>showScreen('register'));
+    document.getElementById('switchToLogin').addEventListener('click',()=>showScreen('login'));
+    document.getElementById('loginButton').addEventListener('click',handleLogin);
+    document.getElementById('registerButton').addEventListener('click',handleRegister);
+    [document.getElementById('masterLogoutButton'),document.getElementById('playerLogoutButton'),document.getElementById('appLogoutButton')].forEach(b=>b.addEventListener('click',handleLogout));
+    document.getElementById('btnPlayer').addEventListener('click',loadPlayerSelection);
+    document.getElementById('btnCriarPrimeiraFicha').addEventListener('click',()=>showApp(null));
+    document.getElementById('btnCriarOutraFicha').addEventListener('click',()=>showApp(null));
+    document.getElementById('saveButton').addEventListener('click',saveFicha);
+    document.getElementById('deleteButton').addEventListener('click',deleteFicha);
+    document.getElementById('exportButton').addEventListener('click',window.exportFicha);
+    document.getElementById('importFile').addEventListener('change',window.importFicha);
+    document.getElementById('agenteUpload').addEventListener('change',async e=>{if(e.target.files[0])document.getElementById('agente').src=await toBase64(e.target.files[0]);});
+    document.getElementById('tokenUpload').addEventListener('change',async e=>{if(e.target.files[0])document.getElementById('token').src=await toBase64(e.target.files[0]);});
+    document.getElementById('masterPlayerList').addEventListener('click',e=>{if(e.target.classList.contains('open-portrait')){const uId=e.target.dataset.userId,cN=e.target.dataset.charName;window.open(`portrait.html?userId=${uId}&charName=${encodeURIComponent(cN)}`,'_blank','width=500,height=150,scrollbars=no,resizable=no');}});
+    document.getElementById('showAlteracoesBtn').addEventListener('click',() => {document.getElementById('alteracoesModal').style.display='flex';});
+    document.getElementById('closeAlteracoesModalBtn').addEventListener('click',() => {document.getElementById('alteracoesModal').style.display='none';});
+    document.getElementById('changelog-icon').addEventListener('click',() => {document.getElementById('changelogModal').style.display='flex';});
+    document.getElementById('closeChangelogModalBtn').addEventListener('click',() => {document.getElementById('changelogModal').style.display='none';});
+    document.getElementById('createMesaBtn').addEventListener('click',() => {const p=prompt("Crie uma senha para a mesa:");if(p&&auth.currentUser){const mR=db.ref(`mesa/${auth.currentUser.uid}`);mR.set({password:p,mapUrl:'',tokens:{}});window.open(`mesa.html?masterId=${auth.currentUser.uid}`,'_blank');}else if(p){alert("Você precisa estar logado como mestre.");}});
+    document.getElementById('joinMesaBtn').addEventListener('click',() => {const mE=prompt("Qual o email do mestre?");if(!mE)return;const p=prompt("Qual a senha da mesa?");if(!p)return;db.ref('users').once('value',(s)=>{let mU=null;if(s.exists()){s.forEach((c)=>{if(c.val().email&&c.val().email.toLowerCase()===mE.toLowerCase().trim()){mU=c.key;}});}if(!mU){alert("Mestre não encontrado.");return;}db.ref(`mesa/${mU}/password`).once('value',(pS)=>{if(pS.exists()&&pS.val()===p){window.open(`mesa.html?masterId=${mU}`,'_blank');}else{alert("Senha incorreta ou mesa não criada.");}});});});
+    document.getElementById('send-chat-btn').addEventListener('click', sendChatMessage);
+    document.getElementById('chat-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') sendChatMessage(); });
+    document.getElementById('send-image-input').addEventListener('change', async (e) => {
+        if(e.target.files[0]) {
+            const charName = document.getElementById('charName').value.trim() || "Agente";
+            const imageUrl = await toBase64(e.target.files[0]);
+            db.ref('chat').push({ sender: charName, imageUrl: imageUrl, timestamp: firebase.database.ServerValue.TIMESTAMP });
+        }
+    });
+    document.getElementById('origem').addEventListener('change', (e) => applyOriginEffects(e.target.value));
+    document.getElementById('agirJogadoresBtn').addEventListener('click', openInitiativeModal);
+    document.getElementById('startInitiativeBtn').addEventListener('click', startInitiative);
+
+    const initiativeAction = (action) => {
+        const initiativeRef = db.ref(`initiative/${currentUser.uid}`);
+        initiativeRef.once('value').then(snapshot => {
+            if (!snapshot.exists()) return;
+            let data = snapshot.val();
+            if(!data.order || data.order.length === 0) return;
+
+            if (action === 'avancarJogador') {
+                data.currentIndex = (data.currentIndex + 1) % data.order.length;
+            } else if (action === 'avancarTurno') {
+                data.currentIndex = 0;
+                data.turn = (data.turn || 1) + 1;
+            } else if (action === 'tirarJogador') {
+                data.order.splice(data.currentIndex, 1);
+                if (data.currentIndex >= data.order.length && data.order.length > 0) {
+                    data.currentIndex = 0;
+                }
+            }
+            if(data.order.length === 0) {
+                initiativeRef.remove();
+            } else {
+                initiativeRef.set(data);
+            }
+        });
+    };
+    document.getElementById('initAvancarJogador').addEventListener('click', () => initiativeAction('avancarJogador'));
+    document.getElementById('initAvancarTurno').addEventListener('click', () => initiativeAction('avancarTurno'));
+    document.getElementById('initTirarJogador').addEventListener('click', () => initiativeAction('tirarJogador'));
+
+    showScreen('login');
+    popularOrigens();
+    document.getElementById('main-dice-display').innerHTML = D20_SVG_ICON + document.getElementById('main-dice-display').innerHTML;
+    [2,3,4,5,6,8,10,12,20,100].forEach(d=>document.getElementById('dadoSelect').innerHTML+=`<option value="${d}">1d${d}</option>`);
+    criarAtributos();
+    criarPericias();
+
+    function popularOrigens() {
+        const select = document.getElementById('origem');
+        select.innerHTML = '';
+        for (const key in ORIGENS) {
+            select.innerHTML += `<option value="${key}">${ORIGENS[key]}</option>`;
+        }
+    }
+});
+</script>
+</body>
+</html>
+
