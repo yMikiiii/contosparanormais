@@ -31,9 +31,14 @@
   .dado-btn{width:36px;height:36px;border-radius:8px;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:700; padding: 4px;}
   .modal-backdrop{position:fixed;inset:0;display:none;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;z-index:50}
   .modal{background:#0e0e0e;padding:16px;border-radius:10px;width:90%;border:2px solid rgba(212,108,255,0.12); display: flex; flex-direction: column;}
-  #infoModal .modal, #alteracoesModal .modal, #changelogModal .modal {max-width:800px; height: 80vh;}
+  #infoModal .modal, #alteracoesModal .modal, #changelogModal .modal, #rulesModal .modal {max-width:800px; height: 80vh;}
   .generic-modal .modal {max-width:500px; height: auto; max-height: 80vh;}
-  #infoModalContent, #alteracoesModalContent, #changelogModalContent, #addPreMadeList, #initiativeCharsList {flex-grow: 1; overflow-y: auto; background: #0d0d0d; border-radius: 8px; padding: 10px; font-family: 'Courier New', monospace; line-height: 1.6;}
+  #infoModalContent, #alteracoesModalContent, #changelogModalContent, #addPreMadeList, #initiativeCharsList, #rulesModalContent {flex-grow: 1; overflow-y: auto; background: #0d0d0d; border-radius: 8px; padding: 10px; font-family: 'Courier New', monospace; line-height: 1.6;}
+  #rulesModalContent { font-family: Segoe UI, Roboto, sans-serif; padding: 20px; }
+  #rulesModalContent h2 { color: var(--accent-2); border-bottom: 1px solid var(--accent-2); padding-bottom: 5px; }
+  #rulesModalContent h3 { color: var(--accent); }
+  #rulesModalContent p { margin-bottom: 15px; }
+  #rulesModalContent ul { margin-left: 20px; margin-bottom: 15px; }
   #infoModalTextarea{width: 100%; height: 100%; background: #0d0d0d; color: #eee; border: 1px solid #3a0a3a; border-radius: 8px; padding: 10px;}
   #masterDashboard{padding:20px;max-width:1400px;margin:20px auto; display: grid; grid-template-columns: 3fr 1fr; gap: 20px;}
   .player-group{background:var(--panel);border-radius:12px;padding:15px;margin-bottom:20px;border-left:4px solid var(--accent)}
@@ -47,7 +52,9 @@
   #initiativeList li.active { background-color: var(--accent-2); color: var(--bg); font-weight: bold;}
   #alteracoesModalContent p { margin: 0 0 8px 0; padding-bottom: 8px; border-bottom: 1px solid #333; }
   #alteracoesModalContent strong { color: var(--accent-2); }
-  #changelog-icon { position: absolute; top: 20px; right: 20px; font-size: 2.5rem; cursor: pointer; user-select: none; }
+  .login-icon { position: absolute; top: 20px; font-size: 2.5rem; cursor: pointer; user-select: none; }
+  #changelog-icon { right: 20px; }
+  #rules-icon { right: 70px; }
   #changelogModalContent ul { padding-left: 20px; }
   #changelogModalContent li { margin-bottom: 10px; }
   #chat-messages { height: 200px; overflow-y: auto; background: #0d0d0d; border-radius: 8px; padding: 10px; margin-bottom: 10px; font-size: 0.9rem;}
@@ -65,6 +72,7 @@
   #sanidade-bar-inner{background:#8e44ad}
   #esforco-bar-inner{background:#f39c12}
   #ocultismo-bar-inner{background:#27ae60}
+  #defesa-bar-inner{background:#00bcd4}
   .stat-inputs{display:flex;gap:5px;margin-top:4px}
   .stat-inputs input{width:50%;text-align:center}
   #nex-bar-container{position:relative;background-color:#0d0d0d;border-radius:8px;height:30px;margin-top:10px;overflow:hidden}
@@ -115,7 +123,8 @@
 <body>
 
 <div id="loginScreen" class="auth-container">
-    <div id="changelog-icon" title="Ver Changelog">🗒️</div>
+    <div id="rules-icon" class="login-icon" title="Ver Livro de Regras">📖</div>
+    <div id="changelog-icon" class="login-icon" title="Ver Changelog">🗒️</div>
     <h1>M.I.L.L.Y</h1>
     <div class="auth-box"><h2>Login</h2><input type="text" id="loginUser" placeholder="Usuário ('mestre' ou seu email)" autocomplete="username"><input type="password" id="loginPass" placeholder="Senha" autocomplete="current-password"><button id="loginButton">Entrar</button><p class="auth-switch" id="switchToRegister">Não tem uma conta? Registre-se</p></div>
 </div>
@@ -201,6 +210,7 @@
             <div class="stat-bar-container"><div class="stat-bar-label"><span>Sanidade</span><span id="sanidade-label"></span></div><div class="stat-bar"><div id="sanidade-bar-inner"></div></div><div class="stat-inputs"><input type="number" id="sanidade"><input type="number" id="sanidadeMax"></div></div>
             <div class="stat-bar-container"><div class="stat-bar-label"><span>Esforço</span><span id="esforco-label"></span></div><div class="stat-bar"><div id="esforco-bar-inner"></div></div><div class="stat-inputs"><input type="number" id="esforco"><input type="number" id="esforcoMax"></div></div>
             <div class="stat-bar-container"><div class="stat-bar-label"><span>Pontos de Ocultismo</span><span id="ocultismo-label"></span></div><div class="stat-bar"><div id="ocultismo-bar-inner"></div></div><div class="stat-inputs"><input type="number" id="ocultismo"><input type="number" id="ocultismoMax"></div></div>
+            <div class="stat-bar-container"><div class="stat-bar-label"><span>Defesa</span><span id="defesa-label"></span></div><div class="stat-bar"><div id="defesa-bar-inner"></div></div><div class="stat-inputs"><input type="number" id="defesa"><input type="number" id="defesaMax"></div></div>
             <label style="margin-top: 15px;">Status do Agente: <select id="statusAgente"><option>Acordado</option><option>Ferido</option><option>Traumatizado</option><option>Desmaiado</option></select></label>
             
             <label style="margin-top: 15px;">Origem: <select id="origem"></select> </label>
@@ -227,7 +237,11 @@
             <div id="momentoOrigemContent"></div>
           </div>
           <div class="panel" style="margin-top:12px"><h2>Atributos</h2><div id="atributosList"></div></div>
-          <div class="panel" style="margin-top:12px"><h2>Perícias</h2><div id="periciasList"></div></div>
+          <div class="panel" style="margin-top:12px">
+            <h2>Perícias</h2>
+            <input type="text" id="periciaSearch" placeholder="Buscar perícia..." style="margin-bottom: 10px;">
+            <div id="periciasList"></div>
+          </div>
         </div>
         <div>
           <div class="panel">
@@ -280,7 +294,133 @@
 <div id="periciaModal" class="modal-backdrop"><div class="modal"><h3 id="modalTitle">Upar Perícia</h3><div id="modalBody" class="small"></div><div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end"><button class="secondary" onclick="window.fecharModal('periciaModal')">Cancelar</button><button class="danger" id="btnDownOnce" onclick="window.confirmDown()">- Tirar Ponto</button><button class="primary" id="btnUpOnce" onclick="window.confirmUp()">+ Upar Perícia</button></div></div></div>
 <div id="infoModal" class="modal-backdrop"><div class="modal"><h3 id="infoModalTitle"></h3><div id="infoModalContent"><!-- Content here --></div><div id="infoModalButtons"></div><div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end"><button class="secondary" onclick="window.fecharModal('infoModal')">Fechar</button><button class="primary" onclick="window.salvarInfoModal()">Salvar e Fechar</button></div></div></div>
 <div id="alteracoesModal" class="modal-backdrop"><div class="modal"><h3>Alterações Recentes</h3><div id="alteracoesModalContent"><p>Nenhuma alteração...</p></div><div style="margin-top:12px;text-align:right;"><button id="closeAlteracoesModalBtn" class="primary">Fechar</button></div></div></div>
-<div id="changelogModal" class="modal-backdrop"><div class="modal"><h3>Changelog | Versão 3.2.0</h3><div id="changelogModalContent"><ul><li><b>NOVO:</b> A identidade visual dos dados foi atualizada em toda a interface!</li><li><b>NOVO:</b> Sistema de Carga/Peso para o inventário. Carga máxima é definida com 1d12 na criação da ficha.</li><li><b>NOVO:</b> Botão para apagar itens, rituais e habilidades da ficha.</li><li><b>NOVO:</b> Botão para rolar dano automaticamente em itens, rituais e habilidades.</li><li><b>NOVO:</b> Adicionados novos itens (munições) e rituais (Destruição, Apagar Existência, Alterar Memória).</li><li>Sistema de "Agir dos Jogadores" para o Mestre com ordem de iniciativa.</li><li>Retratos (portraits) agora brilham quando é a vez do jogador.</li><li>Adição e Criação de Habilidades, Rituais e Itens diretamente pela ficha.</li></ul></div><div style="margin-top:12px;text-align:right;"><button id="closeChangelogModalBtn" class="primary">Fechar</button></div></div></div>
+<div id="changelogModal" class="modal-backdrop"><div class="modal"><h3>Changelog | Versão 3.3.0</h3><div id="changelogModalContent"><ul><li><b>NOVO:</b> Link para o Livro de Regras (PDF) adicionado à tela de login (ícone 📖).</li><li><b>NOVO:</b> Centenas de novos itens e rituais pré-definidos adicionados ao sistema.</li><li>Atualizada a identidade visual dos dados em toda a interface.</li><li>Sistema de Carga/Peso para o inventário (1d12 na criação da ficha).</li><li>Botões para apagar e rolar dano de itens/rituais/habilidades.</li><li>Sistema de "Agir dos Jogadores" para o Mestre.</li><li>Retratos (portraits) agora brilham quando é a vez do jogador.</li></ul></div><div style="margin-top:12px;text-align:right;"><button id="closeChangelogModalBtn" class="primary">Fechar</button></div></div></div>
+<div id="rulesModal" class="modal-backdrop"><div class="modal"><h3>Livro de Regras</h3><div id="rulesModalContent">
+    <p>Contos paranormais é um rpg criado pela Kimi, e foi a ideia do mesmo foi criada em 2024 porém produzida em 2025 pelos amigos da mesma, e hoje nesse documento estão todas as regras do sistema para qualquer ajuda futura sobre dúvidas!</p>
+    <p><i>“Desde que o mundo existe, a maioria pensávamos que o paranormal não deveria existir, porém, após vários atos cruéis e injustiças, o ódio das pessoas acumulou tanto que 6 entidades foram criadas para a divergência do mundo e para ajustar todos esses atos. Assim, o paranormal começou a existir em meados de 1530, e após vários anos, um grupo de pessoas foi formado para combater esse tipo de caso. E esse grupo, são vocês.”</i></p>
+    
+    <h2>Criações de ficha!</h2>
+    <p>Para a criação de uma ficha, é necessário entender o que é cada ATRIBUTO, PERÍCIA E STATUS;</p>
+    <h3>Sobre status:</h3>
+    <ul>
+        <li><strong>Nome do personagem:</strong> Aqui você vai inserir o nome do seu personagem, da sua criação. Para apelidos: Coloque o nome (ex: Bruno Silveira) e após o fim do nome coloque “Brunão” (ex: Bruno Silveira “Brunão”).</li>
+        <li><strong>Vida:</strong> Determinada por 12 + 1d8. Ela pode ser aumentada em 1d8 caso o jogador upe o NÍVEL DE EXPOSIÇÃO.</li>
+        <li><strong>Sanidade:</strong> Determinada pela determinação 16 + 1d6. Pode ser upada com o NÍVEL DE EXPOSIÇÃO. Caso chegue a 0 o jogador vai rolar um 1d6:
+            <ul>
+                <li>1 = O jogador perde o personagem (controlado pelo mestre).</li>
+                <li>2 = O jogador fica 1 sessão fora.</li>
+                <li>3 = O jogador entra num surto de loucura (mestre escolhe).</li>
+                <li>4 = O jogador se controla e recupera 1 de sanidade.</li>
+                <li>5 = O jogador foge daquilo que o machucou.</li>
+                <li>6 = O jogador se atira naquilo que o machucou.</li>
+            </ul>
+        </li>
+        <li><strong>Esforço:</strong> Determinado por 20 + 1d20. Pode ser upado com o Nível de exposição. Caso um jogador não tenha esforço, ele desmaia.</li>
+        <li><strong>Pontos de ocultismo:</strong> Começa em 5 e é upado pelo Nível de exposição (x3.5 mais).</li>
+        <li><strong>Defesa:</strong> Definida por 12 + 1d8.</li>
+        <li><strong>Status do agente:</strong> Determina qual o estado do agente (acordado, ferido, traumatizado, etc).</li>
+        <li><strong>Nível de exposição (NEX):</strong> A cada 100% de NEX é um ponto. Caso atinja 7 pontos, o jogador sabe tudo e perde seu personagem.</li>
+        <li><strong>Origem:</strong> O que seu personagem fazia anteriorment.</li>
+    </ul>
+
+    <h3>ATRIBUTOS!</h3>
+    <p>Seus atributos são o quão bom você é em algo, eles influenciam diretamente em suas perícias. Você começa com 250 pontos para distribuir em todos os atributos (quanto menor melhor). O máximo de um atributo é 15.</p>
+    <p><strong>Regras de Distribuição:</strong></p>
+    <ul>
+        <li>2 perícias com 15.</li>
+        <li>2 perícia de 16-25.</li>
+        <li>2 perícias de 25-40.</li>
+        <li>3 perícias de 40-100.</li>
+        <li>Não é permitido repetir os valores sem ser o 15 (ex: Se força for 25 a agilidade não pode ser 25 também, e também, o máximo na mesma dezena é 2).</li>
+    </ul>
+    <ul>
+        <li><strong>Determinação:</strong> Influência na sua saúde e na sanidade.</li>
+        <li><strong>Armas:</strong> Mede a sua prontidão com armas de fogo.</li>
+        <li><strong>Força:</strong> Mede o quão forte o seu personagem é.</li>
+        <li><strong>Presença:</strong> O quão carismático o personagem é, também serve para perceber coisas.</li>
+        <li><strong>Agilidade:</strong> Prontidão a correr, velocidade, etc.</li>
+        <li><strong>Tecnologia:</strong> Quão bom com tecnologia você é.</li>
+        <li><strong>Inteligência:</strong> Mede o quão esperto é o jogador.</li>
+        <li><strong>Vigor:</strong> Prontidão física do jogador, aguentar climas, etc.</li>
+        <li><strong>Sorte:</strong> O quão sortudo o jogador é em elementos de pura sorte.</li>
+    </ul>
+
+    <h3>PERÍCIAS!</h3>
+    <ul>
+        <li><strong>Encontrar (Inteligência):</strong> Serve para o personagem encontrar coisas.</li>
+        <li><strong>Furtividade (Presença):</strong> Serve para o personagem ser furtivo/se esconder.</li>
+        <li><strong>Ocultismo (Inteligência):</strong> Serve para usar rituais ocultistas, identificar rituais, etc.</li>
+        <li><strong>Explodir (Armas):</strong> Capacidade ao usar armas explosivas.</li>
+        <li><strong>Armas (Armas):</strong> Capacidade do personagem ao usar armas de mão a mão.</li>
+        <li><strong>Sanidade (Determinação):</strong> Testes de quando o personagem vê algo perturbador.</li>
+        <li><strong>Saúde (Determinação):</strong> Determina a saúde física, usada para casos de morte ou riscos.</li>
+        <li><strong>Álcool (Presença):</strong> Determina o quão bêbado um personagem está.</li>
+        <li><strong>Arrombar (Força):</strong> Capacidade de arrombar uma porta.</li>
+        <li><strong>Bater (Força):</strong> Capacidade de dar um contra-ataque ou apenas dar um soco.</li>
+        <li><strong>Brigar (Força):</strong> Equivalente a lutar com alguém, bloqueios, etc.</li>
+        <li><strong>Ouvir (Presença):</strong> Capacidade de entender algo sussurrado, etc.</li>
+        <li><strong>Escutar (Presença):</strong> Capacidade de escutar um barulho, sussurros, etc.</li>
+        <li><strong>Acrobacia (Agilidade):</strong> Esquivar de golpes, passar por lugares estreitos, etc.</li>
+        <li><strong>Falsificar (Tecnologia):</strong> Habilidade de criar documentos, assinaturas ou itens falsos.</li>
+        <li><strong>Dispositivos (Tecnologia):</strong> Capacidade de mexer com equipamentos tecnológicos.</li>
+        <li><strong>Dirigir (Inteligência):</strong> Capacidade de dirigir um automóvel.</li>
+        <li><strong>Atletismo (Força):</strong> Habilidade atlética para realizar algo atlético.</li>
+        <li><strong>Agir (Vigor):</strong> Definir a ordem de um combate, agir sobre pressão, fingir emoções.</li>
+        <li><strong>Medicina (Inteligência):</strong> Capacidade de medicar uma ferida.</li>
+        <li><strong>Reflexos (Agilidade):</strong> Tempo de reação a uma ação surpresa.</li>
+        <li><strong>Sobrevivência (Presença):</strong> Habilidade de sobrevivência, acender fogueira, etc.</li>
+        <li><strong>Enganação (Inteligência):</strong> Capacidade de mentir.</li>
+        <li><strong>Psicologia (Inteligência):</strong> Habilidade psicológica, saber se alguém está mentindo.</li>
+        <li><strong>Intimidar (Presença):</strong> Deixar a pessoa com medo.</li>
+        <li><strong>Lábia (Presença):</strong> Habilidade de persuadir, ter um bom papo.</li>
+        <li><strong>Intuição (Presença):</strong> Entender alguém, um pressentimento.</li>
+        <li><strong>Arremessar (Força):</strong> Capacidade de arremessar objetos.</li>
+        <li><strong>Analisar Ambiente (Presença):</strong> Analisar um ambiente completo.</li>
+        <li><strong>Tentação (Presença):</strong> O seu charme, o quão bonito você pode ser.</li>
+        <li><strong>Sorte (Sorte):</strong> Perícia coringa, quando nenhuma mais dá certo.</li>
+        <li><strong>Ciência (Inteligeligência):</strong> Conhecimento geral sobre biologia e química.</li>
+        <li><strong>Dança (Agilidade):</strong> Capacidade de dançar, pode ser considerada como capoeira.</li>
+    </ul>
+
+    <h2>O QUE É O PARANORMAL?</h2>
+    <p>“Desde que o mundo existe... o paranormal começou a existir em meados de 1530... 6 entidades foram criadas...”</p>
+    <p>O paranormal foi descoberto em 1530 na onde fica hoje em dia a Grécia... O paranormal não é uma entidade, e sim 6 entidades predominantes, cada uma com seu elemento...</p>
+    
+    <h3>ELEMENTOS PARANORMAIS</h3>
+    <ul>
+        <li><strong>Elemento de Carne:</strong> Formado pelo o extremo do corpo (emoções, dores).</li>
+        <li><strong>Elemento de Espelho:</strong> O medo do desconhecido, o outro lado. Mexe com o subconsciente.</li>
+        <li><strong>Elemento de Ordem:</strong> O equilíbrio, a ordem que o mundo precisa.</li>
+        <li><strong>Elemento de Silêncio:</strong> A ausência de tudo, interfere diretamente no tempo.</li>
+        <li><strong>Elemento de Êxtase:</strong> O caos, a bagunça, a aleatoriedade.</li>
+        <li><strong>ELEMENTO DE MEDO:</strong> O que trás o paranormal a nossa realidade, o medo inconsciente. O MEDO É O PARANORMAL.</li>
+    </ul>
+
+    <h3>ORIGENS</h3>
+    <p>As origens representam o que você fazia antes. Elas dão bônus e perícias (+5).</p>
+    <ul>
+        <li><strong>Agente médico:</strong> Bônus: Não perde sanidade após ver corpos. +3 de sanidade. | Perícias: Medicina & Intuição.</li>
+        <li><strong>Lutador:</strong> Bônus: +7 de vida e +10 de pontos de esforço. | Perícias: Bater & Brigar.</li>
+        <li><strong>Colegial:</strong> Bônus: +2 de sanidade e mochila (+5 de carga). | Perícias: Intuição & Lábia.</li>
+        <li><strong>Investigador:</strong> Bônus: 2x/sessão, perguntar ao mestre se há algo de errado na sala (sem rolagem). | Perícias: Encontrar & Analisar ambiente.</li>
+        <li><strong>Defesa-Civil:</strong> Bônus: Começa com um revólver (1d6+3) e 3 pacotes de bala (4 balas cada). | Perícias: Brigar & Armas.</li>
+        <li><strong>Cientista:</strong> Bônus: 1x/sessão, perguntar ao mestre se é possível ter vida num lugar escuro. | Perícias: Ciência & Sobrevivência.</li>
+        <li><strong>Sobrevivente:</strong> Bônus: +10 em sobrevivência, itens de acampamento com mais duração/espaço. | Perícias: Sobrevivência (+10) & Intuição.</li>
+        <li><strong>Artista (Escritor):</strong> Bônus: +10 em Intuição. | Perícias: Intuição & Enganação.</li>
+        <li><strong>Artista (Ator):</strong> Bônus: +10 em Dança. | Perícias: Dança & Acrobacia.</li>
+        <li><strong>Artista (Desenhista):</strong> Bônus: +10 em Enganação. | Perícias: Enganação & Tentação.</li>
+        <li><strong>Artista (Musical):</strong> Bônus: +10 em Dança. | Perícias: Dança & Dispositivos.</li>
+        <li><strong>Atleta:</strong> Bônus: Força+ (Gaste 10 PE para ganhar +15 no teste). | Perícias: Brigar & Atletismo.</li>
+        <li><strong>Noia:</strong> Bônus: Fuga (Gaste 10 PE para ganhar +25 em agilidade, acrobacia, etc em perseguição). | Perícias: Enganação (+10) & Furtividade.</li>
+        <li><strong>Morador de rua:</strong> Bônus: Pode criar um item (arma, etc) com itens "possíveis" (mestre decide). | Perícias: Sobrevivência & Brigar.</li>
+        <li><strong>Traumatizado:</strong> Bônus: NUNCA falha em testes de sanidade. Dano de sanidade reduzido em -2. | Perícias: Sanidade (+20) & Reflexos.</li>
+        <li><strong>Jornalista:</strong> Bônus: 2x/sessão, ao gravar e revisar uma área, ganha +20 em Analisar Ambiente. | Perícias: Analisar Ambiente & Lábia.</li>
+        <li><strong>Engenheiro:</strong> Bônus: 3x/sessão, pode construir um item em 30 min. +5 em Analisar Ambiente (engenharia). | Perícias: Ciência & Analisar Ambiente.</li>
+        <li><strong>Bêbado:</strong> Bônus: Se beber, atributos +20. 1x/sessão, pode usar "Eu conheço aquele cara!" em um NPC. | Perícias: Álcool & Lábia.</li>
+        <li><strong>Cara dos computadores (T.I):</strong> Bônus: No PC, gaste 30% bateria e 3 PE para acessar arquivo confidencial. | Perícias: Dispositivos (+10) & Falsificar.</li>
+    </ul>
+
+</div><div style="margin-top:12px;text-align:right;"><button id="closeRulesModalBtn" class="primary">Fechar</button></div></div></div>
 
 <div id="initiativeCharsModal" class="modal-backdrop generic-modal"><div class="modal"><h3>Selecionar Jogadores para Agir</h3><div id="initiativeCharsList"></div><div class="modal-footer"><button class="secondary" onclick="window.fecharModal('initiativeCharsModal')">Cancelar</button><button class="primary" id="startInitiativeBtn">Girar Ordem</button></div></div></div>
 <div id="addPreMadeModal" class="modal-backdrop generic-modal"><div class="modal"><h3 id="addPreMadeTitle"></h3><div id="addPreMadeList"></div><div class="modal-footer"><button class="secondary" onclick="window.fecharModal('addPreMadeModal')">Fechar</button></div></div></div>
@@ -304,11 +444,41 @@ document.addEventListener('DOMContentLoaded', () => {
     const D20_SVG_ICON = `<svg class="d20-svg" viewBox="0 0 100 100"><path d="M50 4 L18 35 L30 75 L70 75 L82 35 Z M50 4 L18 35 M50 4 L82 35 M18 35 L30 75 M82 35 L70 75 M30 75 L70 75 M50 4 L50 45 M18 35 L50 45 M30 75 L50 45 M50 96 L30 75 M50 96 L70 75 M50 45 L50 96 M50 45 L70 75 M50 45 L82 35" stroke="currentColor" fill="none" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
 
     const ATRIBUTOS = ["determinacao","armas","forca","presenca","agilidade","tecnologia","inteligencia","vigor","sorte"];
-    const PERICIAS = ["Encontrar","Furtividade","Ocultismo","Explodir","Armas","Sanidade","Saude","Alcool","Arrombar","Bater","Brigar","Ouvir","Escutar","Acrobacia","Falsificar","Dispositivos","Dirigir","Atletismo","Agir","Medicina","Reflexos","Sobrevivencia","Enganacao","Psicologia","Intimidar","Labia","Intuicao","Arremessar","AnalisarAmbiente","Tentacao","Sorte","Ciencia","Danca", "Saltar", "Bloquear", "Esquiva", "Exposição ao paranormal"];
+    
+    // PERICIAS agora está em ordem alfabética
+    const PERICIAS = [
+        "Acrobacia", "Agir", "Alcool", "AnalisarAmbiente", "Armas", "Arremessar", "Arrombar", "Atletismo", 
+        "Bater", "Bloquear", "Brigar", "Ciencia", "Danca", "Dirigir", "Dispositivos", "Encontrar", 
+        "Enganacao", "Escutar", "Esquiva", "Explodir", "Exposição ao paranormal", "Falsificar", 
+        "Furtividade", "Intimidar", "Intuicao", "Labia", "Medicina", "Ocultismo", "Ouvir", 
+        "Psicologia", "Reflexos", "Saltar", "Sanidade", "Saude", "Sobrevivencia", "Sorte", "Tentacao"
+    ];
     
     const PERICIA_ATRIBUTO_MAP = {"Encontrar":"inteligencia","Furtividade":"presenca","Ocultismo":"inteligencia","Explodir":"armas","Armas":"armas","Sanidade":"determinacao","Saude":"determinacao","Alcool":"presenca","Arrombar":"forca","Bater":"forca","Brigar":"forca","Ouvir":"presenca","Escutar":"presenca","Acrobacia":"agilidade","Falsificar":"tecnologia","Dispositivos":"tecnologia","Dirigir":"inteligencia","Atletismo":"forca","Agir":"vigor","Medicina":"inteligencia","Reflexos":"agilidade","Sobrevivencia":"presenca","Enganacao":"inteligencia","Psicologia":"inteligencia","Intimidar":"presenca","Labia":"presenca","Intuicao":"presenca","Arremessar":"forca","AnalisarAmbiente":"presenca","Tentacao":"presenca","Sorte":"sorte","Ciencia":"inteligencia","Danca":"agilidade", "Saltar": "agilidade", "Bloquear": "forca", "Esquiva": "agilidade", "Exposição ao paranormal": "presenca"};
 
-    const ORIGENS = {'nenhum':'Nenhuma','agente_medico':'Agente Médico','lutador':'Lutador','colegial':'Colegial','investigador':'Investigador','defesa_civil':'Defesa-Civil','cientista':'Cientista','sobrevivente':'Sobrevivente','artista_escritor':'Artista (Escritor)','artista_ator':'Artista (Ator)','artista_desenhista':'Artista (Desenhista)','atleta':'Atleta','noia':'Noia'};
+    // Constante de Origens Atualizada
+    const ORIGENS = {
+        'nenhum':'Nenhuma',
+        'agente_medico':'Agente Médico',
+        'lutador':'Lutador',
+        'colegial':'Colegial',
+        'investigador':'Investigador',
+        'defesa_civil':'Defesa-Civil',
+        'cientista':'Cientista',
+        'sobrevivente':'Sobrevivente',
+        'artista_escritor': 'Artista (Escritor)',
+        'artista_ator': 'Artista (Ator)',
+        'artista_desenhista': 'Artista (Desenhista)',
+        'artista_musical': 'Artista (Musical)',
+        'atleta':'Atleta',
+        'noia':'Noia',
+        'morador_de_rua': 'Morador de rua',
+        'traumatizado': 'Traumatizado',
+        'jornalista': 'Jornalista',
+        'engenheiro': 'Engenheiro',
+        'bebado': 'Bêbado',
+        'ti': 'Cara dos computadores (T.I)'
+    };
 
     const PRE_MADE_HABILIDADES = {
         rasgar_corpo: { nome: 'Rasgar corpo', dano: '1d12+5', desc: 'Quando o jogador ter uma arma afiada d10+, ele poderá usar tal habilidade para atravessar o corpo da vítima.', custo: '5 de sanidade e 14 pontos de PE.' },
@@ -316,14 +486,43 @@ document.addEventListener('DOMContentLoaded', () => {
         arranhar: { nome: 'Arranhar', dano: '1d4+2', desc: 'Caso o jogador chegue no rosto do atacante com um saltar, ele pode arranhar o rosto do mesmo.', custo: '2 pontos de PE e é necessário MUITO BOM no teste de saltar.' },
         encrencado: { nome: 'Encrencado', dano: '5d12+10', desc: 'Caso o jogador se encontre numa situação de total injustiça e esteja sem saídas, ele poderá usar isso ao um custo bem longo.', custo: '54 pontos de PE, necessário ter transcendido, necessário mais de 20 de vida, 2 quartos da sanidade, 2 terços da vida.' }
     };
+    
+    // Lista de Rituais atualizada
     const PRE_MADE_RITUAIS = {
-        desfinhar: { nome: 'Ritual de Desfinhar', dano: '5d20+12', desc: 'Você mutila o corpo da vítima a ponto de desfinhar a carne dela.', custo: '3 quartos do seus pontos de ocultismo, 1d20 de sanidade.' },
-        obliteracao: { nome: 'Ritual de Obliteração', dano: '2d12+10', desc: 'Você oblitera uma pessoa a alcance médio.', custo: '1 terço do seus pontos de ocultismo, 1d12 de sanidade.' },
-        transcender: { nome: 'Ritual de Transcender', dano: 'N/A', desc: 'Você se conecta ao paranormal totalmente, assim, se tornando uma pessoa especial.\nBônus: Da 1.2x a mais de vida a pessoa, 1.3x a mais de sanidade a pessoa e 2.1x de pontos de ocultismo pra pessoa (Além de upar 1 ponto de NEX completamente, porém, não upando sanidade).', custo: 'N/A' },
-        destruicao: { nome: 'Ritual de Destruição', dano: '2d20', desc: 'O jogador se auto destroi para salvar algo.\nBônus: Protege qualquer um de dano a 10 metros.', custo: '10 pontos de ocultismo' },
-        apagar_existencia: { nome: 'Ritual de Apagar existência', dano: '5d20+10', desc: 'Ao usar esse ritual, você escolhe alguém e dá um dano absurdo, apagando a memória de todos que viram ele nos últimos 10 minutos e provavelmente o matando.', custo: '50 pontos de ocultismo' },
-        alterar_memoria: { nome: 'Ritual de Alterar Memória', dano: 'N/A', desc: 'Você altera a memória de um jogador por um termo definido por 1d6, equivalente aos minutos.', custo: '5 de Pontos de Ocultismo', tempo: '1d6' }
+        transcender: { nome: 'Ritual de Transcender', dano: 'N/A', desc: 'Porta chave para entrar no mundo paranormal. Aumenta 1 ponto de NEX na primeira vez, nas próximas é apenas 45%.', custo: 'Item paranormal.' },
+        obliteracao_carne: { nome: 'Ritual de Obliteração (Carne)', dano: '8d20', desc: 'Destrói a pessoa ao extremo, ela morre de tanta dor.', custo: '3d12 de sanidade e pontos de ocultismo.' },
+        homogenese: { nome: 'Ritual da Homogênese (Carne)', dano: 'N/A', desc: 'Seu corpo é fortificado. Toda bala, ataque corpo a corpo e etc ganha 1d6 de dano a mais.', custo: 'N/A (Requer derramar sangue)' },
+        destruicao_carne: { nome: 'Ritual de Destruição (Carne)', dano: '16d12 (usuário)', desc: 'Você morre. Uma névoa cobre 10m e protege quem você escolher.', custo: '+15 em defesa (aliados)' },
+        esquartejamento: { nome: 'Ritual de Esquartejamento (Carne)', dano: '7d6 (alvo)', desc: 'Os membros do alvo explodem, ela sofre até o último momento.', custo: '2d20 de pontos de ocultismo.' },
+        lembrancas_esquecidas: { nome: 'Ritual de Lembranças Esquecidas (Carne)', dano: 'N/A', desc: 'Ajuda alguém que sofreu "Alterar Memória" a se lembrar de tudo.', custo: 'Alvo: 2d4 vida, 5d4 sanidade. Usuário: 3d6 PO.' },
+        armas_vermelhas: { nome: 'Ritual de Armas Vermelhas (Carne)', dano: '+2d8 (arma)', desc: 'O elemento de Carne fortifica a arma. Adiciona 2d8 a mais em todo dano com essa arma.', custo: '2d12 de pontos de ocultismo.' },
+        duplicacao: { nome: 'Ritual de Duplicação (Espelho)', dano: 'N/A', desc: 'Cria uma ilusão realista de uma pessoa.', custo: 'Alvo: 1d20 sanidade. Usuário: 6d12 PO.' },
+        espelhar: { nome: 'Ritual de Espelhar (Espelho)', dano: '????????', desc: '????????????????????????????????????????', custo: '????????' },
+        invisibilidade: { nome: 'Ritual de Invisibilidade (Espelho)', dano: 'N/A', desc: 'Transforma o ocultista "invisível" por 1d20 horas.', custo: '1d20 PO e 2 de sanidade.' },
+        memoria_espelho: { nome: 'Ritual de Memória (Espelho)', dano: 'N/A', desc: 'Apaga a memória do usuário por 1d12 horas.', custo: '1d12 de sanidade e ocultismo.' },
+        inexistencia: { nome: 'Ritual de Inexistência (Silêncio)', dano: '12d20+15', desc: 'Faz o alvo deixar de existir. Como se nunca tivesse existido.', custo: 'Usuário: 1d20 sanidade, 1d100 PO.' },
+        alterar_destino: { nome: 'Ritual de Alterar Destino (Silêncio)', dano: 'N/A', desc: 'Regenera uma pessoa morta, alterando seu destino.', custo: 'Usuário: 12d12 sanidade, 1d6 vida, 7d6 PO.' },
+        controle_temporal: { nome: 'Ritual de Controle Temporal (Silêncio)', dano: 'N/A', desc: 'Permite retroceder, prosseguir ou parar o tempo baseado num teste de Exposição ao Paranormal.', custo: '7d6 de sanidade e 5 PO (por viagem).' },
+        definhar: { nome: 'Ritual de Definhar (Silêncio)', dano: '12d12', desc: 'Faz a pessoa envelhecer muito rápido, definhando a pele.', custo: '10 PO.' },
+        envelhecimento: { nome: 'Ritual de Envelhecimento (Silêncio)', dano: '1d100 anos', desc: 'Acelera o envelhecimento. A cada ano perdido, -1 sanidade. Se >50 anos, (resultado/3) de dano na vida.', custo: '12 PO.' },
+        aprimorar_arma_extase: { nome: 'Ritual de Aprimorar Arma (Êxtase)', dano: '+3d8 (arma)', desc: 'Adiciona 3d8 no dano da sua arma por 1d6 turnos.', custo: '12 PO.' },
+        sorte_extase: { nome: 'Ritual de Sorte (Êxtase)', dano: 'N/A', desc: 'Gire 7d100 de um atributo/perícia e guarde os resultados para usar no futuro.', custo: '3d10 PO.' },
+        chamar_caos: { nome: 'Ritual de Chamar o Caos (Êxtase)', dano: '3d6 (atacante)', desc: 'Se você tomar dano grave de um ritual, o Caos toma o dano e retribui 3d6 ao atacante.', custo: 'Usuário: 7d10 sanidade, 3d10 PO.' },
+        sacrificio_extase: { nome: 'Ritual de Sacrifício (Êxtase)', dano: 'N/A', desc: 'Caso chegue a 0 de vida, pode trocar um item por uma granada que se auto-explode.', custo: '1 item.' },
+        mostrar_ocultismo: { nome: 'Ritual de Mostrar Ocultismo (Êxtase)', dano: 'N/A', desc: 'Tudo que for paranormal vai brilhar por 2d6 rodadas.', custo: '5d6 PO.' },
+        alterar_memoria_ordem: { nome: 'Ritual de Alterar Memória (Ordem)', dano: 'N/A', desc: 'Muda lembranças, apaga, adiciona ou distorce o que já foi visto.', custo: '2d10 sanidade, 4d12 PO.' },
+        restauracao: { nome: 'Ritual de Restauração (Ordem)', dano: 'N/A', desc: 'Restaura o equilíbrio de uma área ou objeto, selando efeitos.', custo: '1d20 PO, 2d6 sanidade.' },
+        equilibrio_ordem: { nome: 'Ritual de Equilíbrio (Ordem)', dano: 'N/A', desc: 'Redefine todos os efeitos ativos de rituais no ambiente.', custo: '10d10 PO, 4d8 sanidade.' },
+        reversao: { nome: 'Ritual de Reversão (Ordem)', dano: 'N/A', desc: 'Reverte evento paranormal dos últimos 10 minutos.', custo: '7d10 PO, 3d10 sanidade.' },
+        ligacao: { nome: 'Ritual de Ligação (Ordem)', dano: 'N/A', desc: 'Liga sua energia vital a outra pessoa, compartilhando status. Dura 1d30 horas.', custo: '5d12 PO, 5d8 sanidade.' },
+        equilibrio_pessoal: { nome: 'Ritual de Equilíbrio Pessoal (Ordem)', dano: 'N/A', desc: 'Remove um efeito mental ativo e restaura 2d6 de sanidade.', custo: '1d8 PO.' },
+        barrar_ritual: { nome: 'Barrar Ritual (Medo)', dano: 'N/A', desc: 'Barra rituais em 3d20 metros. Você ganha os PO gastos por 1d20 minutos.', custo: 'N/A' },
+        romper_barreira: { nome: 'Romper Barreira (Medo)', dano: 'N/A', desc: 'Rompe a barreira entre os mundos. Quase suicida.', custo: 'Extremo' },
+        criar_receptaculo: { nome: 'Criar Receptáculo (Medo)', dano: 'N/A', desc: 'Transforma um ser em receptáculo por 1d12 minutos. Role 1d20 para ver a consequência.', custo: 'Variado (ver tabela)' },
+        aprimorar_rituais_medo: { nome: 'Aprimorar Rituais (Medo)', dano: '+2d (rituais)', desc: 'Aprimora rituais em 3d20 metros com +2 dados de dano por 2d3 minutos.', custo: 'N/A' }
     };
+
+    // Lista de Itens atualizada
     const PRE_MADE_ITENS = {
         pistola: { nome: 'Pistola', dano: '1d6+3', utilidade: 'Arma de fogo.', combate: true, peso: 1.5 },
         municao_pistola: { nome: 'Munição de pistola', dano: 'N/A', utilidade: 'Pacote com 4 balas.', combate: false, peso: 0.1 },
@@ -331,7 +530,155 @@ document.addEventListener('DOMContentLoaded', () => {
         rifle: { nome: 'Rifle', dano: '2d6+5', utilidade: 'Arma de fogo de longa distância.', combate: true, peso: 3.2 },
         municao_rifle: { nome: 'Munição de rifle', dano: 'N/A', utilidade: 'Pacote com 7 balas.', combate: false, peso: 0.4 },
         faca_pequena: { nome: 'Faca pequena', dano: '1d4+2', utilidade: 'Arma branca de corte.', combate: true, peso: 0.1 },
-        faca_cozinha: { nome: 'Faca de cozinha', dano: '1d4+3', utilidade: 'Arma branca de corte.', combate: true, peso: 0.5 }
+        faca_cozinha: { nome: 'Faca de cozinha', dano: '1d6', utilidade: 'Arma branca de corte.', combate: true, peso: 0.5 },
+        pilhas: { nome: 'Pilhas (par)', utilidade: 'Para lanternas e dispositivos.', combate: false, peso: 0.2 },
+        fosforos: { nome: 'Fósforos', utilidade: 'Caixa de fósforos.', combate: false, peso: 0.1 },
+        isqueiro: { nome: 'Isqueiro', utilidade: 'Acende fogo.', combate: false, peso: 0.1 },
+        cigarros: { nome: 'Cigarros (maço)', utilidade: 'Maço de cigarros.', combate: false, peso: 0.1 },
+        corda: { nome: 'Corda (10m)', utilidade: '10 metros de corda.', combate: false, peso: 1.5 },
+        fita_adesiva: { nome: 'Fita adesiva', utilidade: 'Rolo de fita.', combate: false, peso: 0.3 },
+        chave_inglesa: { nome: 'Chave inglesa', dano: '1d6', utilidade: 'Ferramenta.', combate: true, peso: 1.0 },
+        martelo: { nome: 'Martelo', dano: '1d6', utilidade: 'Ferramenta.', combate: true, peso: 1.2 },
+        pe_de_cabra: { nome: 'Pé de cabra', dano: '1d6', utilidade: 'Ferramenta. +10 em Arrombar.', combate: true, peso: 2.0 },
+        canivete: { nome: 'Canivete', dano: '1d4', utilidade: 'Faca de bolso.', combate: true, peso: 0.2 },
+        faca_combate: { nome: 'Faca de combate', dano: '1d6', utilidade: 'Arma branca.', combate: true, peso: 0.5 },
+        acha: { nome: 'Acha', dano: '1d8', utilidade: 'Arma branca.', combate: true, peso: 1.8 },
+        machadinho: { nome: 'Machadinho', dano: '1d6', utilidade: 'Arma branca.', combate: true, peso: 1.0 },
+        machado_bombeiro: { nome: 'Machado de bombeiro', dano: '1d10', utilidade: 'Arma branca pesada.', combate: true, peso: 2.5 },
+        tesoura_grande: { nome: 'Tesoura grande', dano: '1d4', utilidade: 'Ferramenta de corte.', combate: true, peso: 0.5 },
+        ponta_apontador: { nome: 'Ponta de apontador', utilidade: 'Para rituais com sangue.', combate: false, peso: 0.1 },
+        agulha_enferrujada: { nome: 'Agulha enferrujada', dano: '1d2', utilidade: 'Risco de infecção.', combate: true, peso: 0.1 },
+        caco_vidro: { nome: 'Caco de vidro', dano: '1d4', utilidade: 'Arma improvisada.', combate: true, peso: 0.1 },
+        barra_ferro: { nome: 'Barra de ferro', dano: '1d8', utilidade: 'Arma improvisada.', combate: true, peso: 2.0 },
+        taco_beisebol: { nome: 'Taco de beisebol', dano: '1d6', utilidade: 'Arma de impacto.', combate: true, peso: 1.0 },
+        corrente_metalica: { nome: 'Corrente metálica', dano: '1d6', utilidade: 'Pode prender.', combate: true, peso: 1.5 },
+        estilete: { nome: 'Estilete', dano: '1d4', utilidade: 'Ferramenta de corte.', combate: true, peso: 0.1 },
+        espatula_pedreiro: { nome: 'Espátula de pedreiro', dano: '1d3', utilidade: 'Ferramenta.', combate: true, peso: 0.3 },
+        martelo_pequeno: { nome: 'Martelo pequeno', dano: '1d4', utilidade: 'Ferramenta.', combate: true, peso: 0.5 },
+        martelo_grande: { nome: 'Martelo grande', dano: '1d8', utilidade: 'Ferramenta.', combate: true, peso: 1.8 },
+        alicate: { nome: 'Alicate', dano: '1d3', utilidade: 'Ferramenta.', combate: true, peso: 0.4 },
+        parafusadeira: { nome: 'Parafusadeira elétrica', utilidade: 'Ferramenta.', combate: false, peso: 1.0 },
+        chave_fenda: { nome: 'Chave de fenda', dano: '1d3', utilidade: 'Ferramenta.', combate: true, peso: 0.2 },
+        caneta_esferografica: { nome: 'Caneta esferográfica', utilidade: 'Improvisada.', combate: false, peso: 0.1 },
+        caneta_tinteiro: { nome: 'Caneta-tinteiro', utilidade: 'Pode conter sangue.', combate: false, peso: 0.1 },
+        lanterna_uv: { nome: 'Lanterna UV', utilidade: 'Revela rastros de sangue.', combate: false, peso: 0.3 },
+        gravador: { nome: 'Gravador de voz', utilidade: 'Grava áudio.', combate: false, peso: 0.2 },
+        camera: { nome: 'Câmera digital', utilidade: '+15 Analisar Ambiente ao revisar.', combate: false, peso: 0.5 },
+        binoculos: { nome: 'Binóculos', utilidade: '+10 Analisar Ambiente à distância.', combate: false, peso: 0.7 },
+        radio: { nome: 'Rádio comunicador', utilidade: '2 km de alcance.', combate: false, peso: 0.4 },
+        celular: { nome: 'Celular', utilidade: 'Pode gravar e rastrear.', combate: false, peso: 0.2 },
+        tablet: { nome: 'Tablet', utilidade: 'Acesso a documentos e fotos.', combate: false, peso: 0.6 },
+        laptop: { nome: 'Laptop', utilidade: 'Computador portátil.', combate: false, peso: 2.5 },
+        mochila_p: { nome: 'Mochila pequena', utilidade: 'Aumenta carga máxima em 2.', combate: false, peso: 1.0 },
+        mochila_m: { nome: 'Mochila média', utilidade: 'Aumenta carga máxima em 5.', combate: false, peso: 1.5 },
+        mochila_t: { nome: 'Mochila tática', utilidade: 'Aumenta carga máxima em 10.', combate: false, peso: 2.0 },
+        bolsa_lat: { nome: 'Bolsa lateral', utilidade: 'Aumenta carga máxima em 3.', combate: false, peso: 0.8 },
+        bolsa_omb: { nome: 'Bolsa de ombro', utilidade: 'Bolsa.', combate: false, peso: 0.7 },
+        colete_l: { nome: 'Colete leve', dano: 'N/A', utilidade: 'Proteção. Reduz 1d4 dano físico.', combate: false, peso: 2.0 },
+        colete_t: { nome: 'Colete tático', dano: 'N/A', utilidade: 'Proteção. Reduz 1d6 dano físico.', combate: false, peso: 3.5 },
+        capacete: { nome: 'Capacete militar', dano: 'N/A', utilidade: 'Proteção. Reduz 1d4 dano em cabeça.', combate: false, peso: 1.5 },
+        mascara_gas: { nome: 'Máscara de gás', utilidade: 'Protege de fumaça e gases.', combate: false, peso: 0.8 },
+        mascara_ritual: { nome: 'Máscara ritualística', utilidade: '+10 Ocultismo.', combate: false, peso: 0.5 },
+        capuz: { nome: 'Capuz de pano', utilidade: 'Veste.', combate: false, peso: 0.2 },
+        capa: { nome: 'Capa preta', utilidade: 'Usada em rituais.', combate: false, peso: 0.6 },
+        luvas_couro: { nome: 'Luvas de couro', utilidade: 'Veste.', combate: false, peso: 0.2 },
+        luvas_cir: { nome: 'Luvas cirúrgicas', utilidade: 'Veste.', combate: false, peso: 0.1 },
+        jaleco: { nome: 'Jaleco médico', utilidade: 'Veste.', combate: false, peso: 0.4 },
+        uniforme_pol: { nome: 'Uniforme policial', utilidade: 'Veste.', combate: false, peso: 1.2 },
+        relogio_d: { nome: 'Relógio digital', utilidade: 'Mostra horas.', combate: false, peso: 0.1 },
+        relogio_b: { nome: 'Relógio de bolso', utilidade: 'Antigo, ritualístico.', combate: false, peso: 0.2 },
+        espelho_p: { nome: 'Espelho pequeno', utilidade: 'Espelho.', combate: false, peso: 0.1 },
+        espelho_a: { nome: 'Espelho antigo', utilidade: '+15 Analisar Ambiente em rituais.', combate: false, peso: 1.0 },
+        fragmento_esp: { nome: 'Fragmento de espelho quebrado', utilidade: '+10 Ocultismo, -5 Sanidade.', combate: false, peso: 0.2 },
+        velas_p: { nome: 'Velas pretas (x3)', utilidade: '+5 Ocultismo.', combate: false, peso: 0.3 },
+        velas_b: { nome: 'Velas brancas (x3)', utilidade: 'Velas.', combate: false, peso: 0.3 },
+        velas_v: { nome: 'Velas vermelhas (x3)', utilidade: '+10 Ocultismo com sangue.', combate: false, peso: 0.3 },
+        incenso: { nome: 'Incenso ritualístico', utilidade: '+10 Ocultismo.', combate: false, peso: 0.2 },
+        cinzas_h: { nome: 'Cinzas humanas', utilidade: '+15 Ocultismo.', combate: false, peso: 0.1 },
+        cinzas_a: { nome: 'Cinzas de animal', utilidade: 'Componente ritualístico.', combate: false, peso: 0.1 },
+        sangue_h: { nome: 'Sangue humano (frasco)', utilidade: '+10 Ocultismo.', combate: false, peso: 0.2 },
+        sangue_a: { nome: 'Sangue de animal (frasco)', utilidade: 'Componente ritualístico.', combate: false, peso: 0.2 },
+        giz_b: { nome: 'Giz branco', utilidade: 'Para selos básicos.', combate: false, peso: 0.1 },
+        giz_v: { nome: 'Giz vermelho', utilidade: '+10 Ocultismo.', combate: false, peso: 0.1 },
+        giz_p: { nome: 'Giz preto', utilidade: 'Usado em rituais de destruição.', combate: false, peso: 0.1 },
+        livro_a: { nome: 'Livro antigo', utilidade: '+15 Ocultismo.', combate: false, peso: 1.0 },
+        diario_r: { nome: 'Diário ritualístico', utilidade: '+15 Ocultismo ao revisar.', combate: false, peso: 0.5 },
+        livro_ana: { nome: 'Livro de anatomia', utilidade: 'Componente.', combate: false, peso: 1.0 },
+        caderno: { nome: 'Caderno com anotações estranhas', utilidade: 'Item de lore.', combate: false, peso: 0.4 },
+        pagina_g: { nome: 'Página rasgada de grimório', utilidade: 'Componente.', combate: false, peso: 0.1 },
+        amuleto: { nome: 'Amuleto de proteção', dano: 'N/A', utilidade: 'Reduz 1d6 dano espiritual.', combate: false, peso: 0.1 },
+        pingente_m: { nome: 'Pingente do medo', utilidade: '+10 Sanidade.', combate: false, peso: 0.1 },
+        medalhao: { nome: 'Medalhão rachado', utilidade: 'Emite leve energia.', combate: false, peso: 0.2 },
+        anel_p: { nome: 'Anel de prata', utilidade: 'Joia.', combate: false, peso: 0.1 },
+        anel_o: { nome: 'Anel de osso', utilidade: '+10 Ocultismo, -5 Saúde.', combate: false, peso: 0.1 },
+        cranio_h: { nome: 'Crânio humano', utilidade: 'Componente.', combate: false, peso: 0.8 },
+        cranio_a: { nome: 'Crânio de animal', utilidade: 'Componente.', combate: false, peso: 0.5 },
+        ossos: { nome: 'Ossos limpos', utilidade: 'Usados para círculos.', combate: false, peso: 0.7 },
+        enxofre: { nome: 'Pó de enxofre', utilidade: 'Repele entidades.', combate: false, peso: 0.2 },
+        sal: { nome: 'Sal grosso', utilidade: '+10 Ocultismo.', combate: false, peso: 0.3 },
+        oleo_s: { nome: 'Frasco de óleo sagrado', utilidade: 'Componente.', combate: false, peso: 0.2 },
+        agua_b: { nome: 'Água benta', utilidade: 'Componente.', combate: false, peso: 0.3 },
+        agua_t: { nome: 'Água turva', utilidade: 'Possivelmente amaldiçoada.', combate: false, peso: 0.3 },
+        areia_p: { nome: 'Areia preta', utilidade: 'Areia ritual.', combate: false, peso: 0.3 },
+        tecido_r: { nome: 'Tecido ritualístico', utilidade: 'Componente.', combate: false, peso: 0.2 },
+        fita_v: { nome: 'Fita vermelha', utilidade: 'Componente.', combate: false, peso: 0.1 },
+        fita_b: { nome: 'Fita branca', utilidade: 'Componente.', combate: false, peso: 0.1 },
+        estatua_p: { nome: 'Estátua pequena', utilidade: 'Componente.', combate: false, peso: 0.6 },
+        estatua_d: { nome: 'Estátua desgastada', utilidade: 'Componente.', combate: false, peso: 0.6 },
+        reliquia: { nome: 'Relíquia antiga', utilidade: '+15 Ocultismo e Intuição.', combate: false, peso: 0.4 },
+        sino_p: { nome: 'Sino de prata', utilidade: '+10 Sanidade.', combate: false, peso: 0.3 },
+        sino_f: { nome: 'Sino de ferro', utilidade: 'Componente.', combate: false, peso: 0.4 },
+        placa_m: { nome: 'Placa metálica com símbolos', utilidade: 'Componente.', combate: false, peso: 0.5 },
+        lamina_s: { nome: 'Lâmina de sacrifício', dano: '1d6', utilidade: '+10 Ocultismo.', combate: true, peso: 0.3 },
+        faca_r: { nome: 'Faca ritual', dano: '1d8', utilidade: 'Requer sangue.', combate: true, peso: 0.4 },
+        punhal_e: { nome: 'Punhal enferrujado', dano: '1d4', utilidade: 'Risco de infecção.', combate: true, peso: 0.3 },
+        espada_c: { nome: 'Espada cerimonial', dano: '1d10', utilidade: '+5 Ocultismo.', combate: true, peso: 1.5 },
+        dente_h: { nome: 'Dente humano', utilidade: 'Usado como talismã.', combate: false, peso: 0.1 },
+        cabelo_h: { nome: 'Cabelo humano', utilidade: 'Usado em feitiços.', combate: false, peso: 0.1 },
+        olho_v: { nome: 'Olho de vidro', utilidade: 'Componente.', combate: false, peso: 0.1 },
+        dente_a: { nome: 'Dente de animal', utilidade: 'Componente.', combate: false, peso: 0.1 },
+        dedo_m: { nome: 'Dedo mumificado', utilidade: 'Componente.', combate: false, peso: 0.1 },
+        coroa_o: { nome: 'Coroa de ossos', utilidade: 'Componente.', combate: false, peso: 0.6 },
+        tinta_n: { nome: 'Tinta negra', utilidade: '+5 Ocultismo.', combate: false, peso: 0.2 },
+        pincel_r: { nome: 'Pincel ritual', utilidade: 'Componente.', combate: false, peso: 0.1 },
+        pena_c: { nome: 'Pena de corvo', utilidade: 'Componente.', combate: false, peso: 0.1 },
+        espelho_q: { nome: 'Pedaço de espelho queimado', utilidade: 'Componente.', combate: false, peso: 0.2 },
+        vidro_c: { nome: 'Vidro colorido', utilidade: 'Componente.', combate: false, peso: 0.2 },
+        caco_s: { nome: 'Caco ensanguentado', dano: '1d4', utilidade: 'Componente.', combate: true, peso: 0.1 },
+        moeda_a: { nome: 'Moeda antiga', utilidade: 'Componente.', combate: false, peso: 0.1 },
+        carta_r: { nome: 'Carta rasgada com selo', utilidade: 'Item de lore.', combate: false, peso: 0.1 },
+        envelope_q: { nome: 'Envelope queimado', utilidade: 'Item de lore.', combate: false, peso: 0.1 },
+        foto_a: { nome: 'Foto antiga', utilidade: 'Item de lore.', combate: false, peso: 0.1 },
+        polaroid: { nome: 'Polaroid recente', utilidade: 'Item de lore.', combate: false, peso: 0.1 },
+        doc_falso: { nome: 'Documento falso', utilidade: 'Item.', combate: false, peso: 0.1 },
+        cracha_falso: { nome: 'Crachá falso', utilidade: 'Item.', combate: false, peso: 0.1 },
+        carteira: { nome: 'Carteira', utilidade: 'Item.', combate: false, peso: 0.2 },
+        carteira_s: { nome: 'Carteira com símbolo estranho', utilidade: 'Item.', combate: false, peso: 0.2 },
+        chave_d: { nome: 'Chave dourada', utilidade: 'Item.', combate: false, peso: 0.1 },
+        chave_e: { nome: 'Chave enferrujada', utilidade: 'Item.', combate: false, peso: 0.1 },
+        cartao_m: { nome: 'Cartão magnético', utilidade: 'Item.', combate: false, peso: 0.1 },
+        cartao_s: { nome: 'Cartão manchado de sangue', utilidade: 'Item.', combate: false, peso: 0.1 },
+        pasta_c: { nome: 'Pasta de couro', utilidade: 'Item.', combate: false, peso: 0.7 },
+        pasta_d: { nome: 'Pasta com documentos', utilidade: 'Item.', combate: false, peso: 1.0 },
+        caixa_m: { nome: 'Caixa de madeira', utilidade: 'Item.', combate: false, peso: 1.0 },
+        caixa_met: { nome: 'Caixa de metal', utilidade: 'Item.', combate: false, peso: 1.5 },
+        frasco_v: { nome: 'Frasco de vidro', utilidade: 'Item.', combate: false, peso: 0.2 },
+        frasco_p: { nome: 'Frasco de perfume', utilidade: 'Inflamável.', combate: false, peso: 0.3 },
+        frasco_vazio: { nome: 'Frasco vazio', utilidade: 'Item.', combate: false, peso: 0.1 },
+        garrafa_beb: { nome: 'Garrafa de bebida', utilidade: 'Álcool 70%.', combate: false, peso: 0.8 },
+        garrafa_vod: { nome: 'Garrafa de vodka', utilidade: 'Bêbados adoram.', combate: false, peso: 1.0 },
+        kit_med: { nome: 'Kit médico', dano: 'N/A', utilidade: '+15 Medicina, cura 2d6 PV.', combate: false, peso: 1.0 },
+        kit_arr: { nome: 'Kit de arrombamento', dano: 'N/A', utilidade: '+15 Arrombar.', combate: false, peso: 1.2 },
+        kit_eng: { nome: 'Kit de engenharia', dano: 'N/A', utilidade: '+15 Ciências e Dispositivos.', combate: false, peso: 2.5 },
+        kit_fal: { nome: 'Kit de falsificação', dano: 'N/A', utilidade: '+15 Falsificar e Enganação.', combate: false, peso: 0.8 },
+        kit_sob: { nome: 'Kit de sobrevivência', dano: 'N/A', utilidade: '+15 Sobrevivência.', combate: false, peso: 1.5 },
+        kit_inv: { nome: 'Kit de investigação', dano: 'N/A', utilidade: '+15 Analisar Ambiente e Psicologia.', combate: false, peso: 1.3 },
+        kit_ocu: { nome: 'Kit de ocultismo', dano: 'N/A', utilidade: '+15 Ocultismo.', combate: false, peso: 1.0 },
+        kit_exp: { nome: 'Kit explosivo', dano: 'N/A', utilidade: '+15 Explodir.', combate: false, peso: 2.0 },
+        kit_atl: { nome: 'Kit de atletismo', dano: 'N/A', utilidade: '+15 Atletismo e Acrobacia.', combate: false, peso: 0.8 },
+        kit_cie: { nome: 'Kit de ciência', dano: 'N/A', utilidade: '+15 Ciência e Medicina.', combate: false, peso: 2.2 },
+        kit_psi: { nome: 'Kit de psicologia', dano: 'N/A', utilidade: '+15 Psicologia e Intuição.', combate: false, peso: 0.7 },
+        kit_rit_com: { nome: 'Kit ritualístico completo', dano: 'N/A', utilidade: '+20 Ocultismo; contém velas, sangue, cinzas, giz e lâmina ritual.', combate: false, peso: 3.0 },
     };
     
     const screens = {login: document.getElementById('loginScreen'), register: document.getElementById('registerScreen'), welcome: document.getElementById('welcomeScreen'), device: document.getElementById('deviceSelectionScreen'), master: document.getElementById('masterDashboard'), playerSelection: document.getElementById('playerSelectionScreen'), app: document.getElementById('appScreen')};
@@ -531,14 +878,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function readCurrentFichaObject(){
-        const ficha={charName:document.getElementById("charName").value.trim()||"Sem Nome",vida:document.getElementById("vida").value,vidaMax:document.getElementById("vidaMax").value,sanidade:document.getElementById("sanidade").value,sanidadeMax:document.getElementById("sanidadeMax").value,esforco:document.getElementById("esforco").value,esforcoMax:document.getElementById("esforcoMax").value,ocultismo:document.getElementById("ocultismo").value,ocultismoMax:document.getElementById("ocultismoMax").value,nex:document.getElementById("nex").value,pontosNEX: document.getElementById("pontosNEX").value, periciaPoints:document.getElementById("periciaPoints").value,statusAgente:document.getElementById("statusAgente").value,origem:document.getElementById("origem").value,cargaMaxima:document.getElementById("cargaMaxima").value,anotacoes:document.getElementById("anotacoes").value,itens:document.getElementById("itens").value,rituais:document.getElementById("rituais").value,combate:document.getElementById("combate").value,enigmas:document.getElementById("enigmas").value,agente:document.getElementById("agente").src,token:document.getElementById("token").src,charColor:document.getElementById("charColor").value,atributos:{},periciaLevels:periciaLevels};
+        const ficha={charName:document.getElementById("charName").value.trim()||"Sem Nome",vida:document.getElementById("vida").value,vidaMax:document.getElementById("vidaMax").value,sanidade:document.getElementById("sanidade").value,sanidadeMax:document.getElementById("sanidadeMax").value,esforco:document.getElementById("esforco").value,esforcoMax:document.getElementById("esforcoMax").value,ocultismo:document.getElementById("ocultismo").value,ocultismoMax:document.getElementById("ocultismoMax").value,defesa:document.getElementById("defesa").value,defesaMax:document.getElementById("defesaMax").value,nex:document.getElementById("nex").value,pontosNEX: document.getElementById("pontosNEX").value, periciaPoints:document.getElementById("periciaPoints").value,statusAgente:document.getElementById("statusAgente").value,origem:document.getElementById("origem").value,cargaMaxima:document.getElementById("cargaMaxima").value,anotacoes:document.getElementById("anotacoes").value,itens:document.getElementById("itens").value,rituais:document.getElementById("rituais").value,combate:document.getElementById("combate").value,enigmas:document.getElementById("enigmas").value,agente:document.getElementById("agente").src,token:document.getElementById("token").src,charColor:document.getElementById("charColor").value,atributos:{},periciaLevels:periciaLevels};
         ATRIBUTOS.forEach(a=>ficha.atributos[a]=document.getElementById(a).value);
         return ficha;
     }
 
     function applyFichaToScreen(f){
-        resetFichaScreen();document.getElementById("charName").value=f.charName||'';
-        ['vida','vidaMax','sanidade','sanidadeMax','esforco','esforcoMax','ocultismo','ocultismoMax','nex','pontosNEX','periciaPoints','cargaMaxima'].forEach(s=>{if(f[s]!==undefined)document.getElementById(s).value=f[s];});
+        resetFichaScreen(true); // Pass true to skip randomizing stats
+        document.getElementById("charName").value=f.charName||'';
+        ['vida','vidaMax','sanidade','sanidadeMax','esforco','esforcoMax','ocultismo','ocultismoMax','defesa','defesaMax','nex','pontosNEX','periciaPoints','cargaMaxima'].forEach(s=>{if(f[s]!==undefined)document.getElementById(s).value=f[s];});
         if(f.statusAgente)document.getElementById("statusAgente").value=f.statusAgente;
         if(f.origem)document.getElementById("origem").value=f.origem;
         ['anotacoes','itens','rituais','combate','enigmas'].forEach(id=>{if(f[id])document.getElementById(id).value=f[id];});
@@ -553,13 +901,24 @@ document.addEventListener('DOMContentLoaded', () => {
         atualizarUI_NEX();
     }
 
-    function resetFichaScreen(){
+    function resetFichaScreen(isLoading = false){
         document.getElementById('fichaForm').reset();
         periciaLevels={}; originBonus={};
         PERICIAS.forEach(p => periciaLevels[p] = 0);
         document.getElementById("agente").src="https://placehold.co/200x200/1a001a/d46cff/png?text=Retrato";document.getElementById("token").src="https://placehold.co/150x150/1a001a/d46cff/png?text=Token";document.getElementById("charColor").value="#d46cff";
-        const cargaMaxima = Math.floor(Math.random() * 12) + 1;
-        const d={vida:10,vidaMax:10,sanidade:10,sanidadeMax:10,esforco:2,esforcoMax:2,ocultismo:0,ocultismoMax:0,nex:0,pontosNEX:0,periciaPoints:0, cargaMaxima: cargaMaxima};Object.keys(d).forEach(k=>document.getElementById(k).value=d[k]);
+        
+        let vida = 10, sanidade = 10, esforco = 2, ocultismo = 5, cargaMaxima = 10, defesa = 10;
+        if (!isLoading) {
+            vida = 12 + Math.floor(Math.random() * 8) + 1;
+            sanidade = 16 + Math.floor(Math.random() * 6) + 1;
+            esforco = 20 + Math.floor(Math.random() * 20) + 1;
+            ocultismo = 5;
+            cargaMaxima = Math.floor(Math.random() * 12) + 1;
+            defesa = 12 + Math.floor(Math.random() * 8) + 1; // Add this line
+        }
+
+        const d={vida: vida, vidaMax: vida, sanidade: sanidade, sanidadeMax: sanidade, esforco: esforco, esforcoMax: esforco, ocultismo:ocultismo, ocultismoMax:ocultismo, defesa: defesa, defesaMax: defesa, nex:0, pontosNEX:0, periciaPoints:0, cargaMaxima: cargaMaxima}; // Add defesa and defesaMax
+        Object.keys(d).forEach(k=>document.getElementById(k).value=d[k]);
         ATRIBUTOS.forEach(a=>document.getElementById(a).value=(a==='inteligencia'?10:0));['anotacoes','itens','rituais','combate','enigmas'].forEach(id=>document.getElementById(id).value="");
         document.getElementById("origem").value = 'nenhum';
         applyOriginEffects('nenhum');
@@ -570,7 +929,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.exportFicha=()=>{const f=readCurrentFichaObject(),s=JSON.stringify(f,null,2),b=new Blob([s],{type:"application/json"}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=`${f.charName||'ficha'}.json`;a.click();URL.revokeObjectURL(u);};
     window.importFicha=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{try{const d=JSON.parse(e.target.result);showApp(null);setTimeout(()=>{applyFichaToScreen(d);alert(`Ficha "${d.charName}" carregada. Salve para adicionar.`);},100);}catch(err){alert("Erro ao ler.");}};r.readAsText(f);e.target.value='';};
     
-    function updateAllBars(){const uB=(id,c,m)=>{const nC=parseInt(c)||0,nM=parseInt(m)||1,p=Math.max(0,Math.min(100,(nC/nM)*100));document.getElementById(`${id}-bar-inner`).style.width=`${p}%`;document.getElementById(`${id}-label`).textContent=`${nC}/${nM}`;};['vida','sanidade','esforco','ocultismo'].forEach(id=>uB(id,document.getElementById(id).value,document.getElementById(id+'Max').value));atualizarUI_NEX();}
+    function updateAllBars(){const uB=(id,c,m)=>{const nC=parseInt(c)||0,nM=parseInt(m)||1,p=Math.max(0,Math.min(100,(nC/nM)*100));document.getElementById(`${id}-bar-inner`).style.width=`${p}%`;document.getElementById(`${id}-label`).textContent=`${nC}/${nM}`;};['vida','sanidade','esforco','ocultismo','defesa'].forEach(id=>uB(id,document.getElementById(id).value,document.getElementById(id+'Max').value));atualizarUI_NEX();}
     
     function atualizarUI_NEX() {
         const nex = parseInt(document.getElementById('nex').value) || 0;
@@ -611,16 +970,22 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     
     function criarAtributos(){const d=document.getElementById("atributosList");d.innerHTML="";ATRIBUTOS.forEach(a=>{const r=document.createElement("div");r.className="atributo-row";r.innerHTML=`<span class="name">${a.charAt(0).toUpperCase()+a.slice(1)}:</span><input type="number" id="${a}" value="0" min="0" max="85"><div class="dado-btn" onclick="window.rolarAtributo('${a}')">${D20_SVG_ICON}</div><div id="res-${a}" class="res-text">-</div>`;d.appendChild(r);});}
+    
+    // criarPericias agora filtra com base na busca
     function criarPericias(){
         const div = document.getElementById("periciasList"); div.innerHTML = "";
+        const searchTerm = document.getElementById("periciaSearch").value.toLowerCase(); // Get search term
+
         PERICIAS.forEach(p=>{
-            const row = document.createElement("div"); row.className = "pericia-row";
-            const level = periciaLevels[p] || 0;
-            const bonus = originBonus[p] || 0;
-            const totalBonus = (level * 5) + bonus;
-            const levelText = totalBonus > 0 ? `(+${totalBonus})` : "";
-            row.innerHTML = `<span class="name pericia-name" style="cursor:pointer;" onclick="window.abrirModalUp('${p}')">${p}</span><div class="dado-btn" onclick="window.rolarPericia('${p}')">${D20_SVG_ICON}</div><div id="res-${p}" class="res-text">-</div><span class="pericia-level">${levelText}</span>`;
-            div.appendChild(row);
+            if (p.toLowerCase().includes(searchTerm)) { // Filter logic
+                const row = document.createElement("div"); row.className = "pericia-row";
+                const level = periciaLevels[p] || 0;
+                const bonus = originBonus[p] || 0;
+                const totalBonus = (level * 5) + bonus;
+                const levelText = totalBonus > 0 ? `(+${totalBonus})` : "";
+                row.innerHTML = `<span class="name pericia-name" style="cursor:pointer;" onclick="window.abrirModalUp('${p}')">${p}</span><div class="dado-btn" onclick="window.rolarPericia('${p}')">${D20_SVG_ICON}</div><div id="res-${p}" class="res-text">-</div><span class="pericia-level">${levelText}</span>`;
+                div.appendChild(row);
+            }
         });
     }
     
@@ -737,48 +1102,122 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Função de Origens Atualizada
     function applyOriginEffects(originId, isLoading = false) {
+        const vidaMax = document.getElementById('vidaMax');
+        const sanidadeMax = document.getElementById('sanidadeMax');
+        const esforcoMax = document.getElementById('esforcoMax');
+        
         if (!isLoading) {
-            const d={vidaMax:10,sanidadeMax:10,esforcoMax:2};
-            Object.keys(d).forEach(k=>document.getElementById(k).value=d[k]);
+            // Stats base são definidos em resetFichaScreen
             document.getElementById('itens').value = '';
         }
 
         originBonus = {};
         const momentoPanel = document.getElementById('momentoOrigemPanel');
+        const momentoContent = document.getElementById('momentoOrigemContent');
         momentoPanel.classList.add('hidden');
-        momentoPanel.innerHTML = '<h2>Momento da Origem</h2>';
+        momentoContent.innerHTML = '';
 
         switch(originId) {
-            case 'agente_medico': if(!isLoading) document.getElementById('sanidadeMax').value = 13; originBonus['Medicina'] = 5; originBonus['Intuição'] = 5; break;
-            case 'lutador': if(!isLoading) { document.getElementById('vidaMax').value = 17; document.getElementById('esforcoMax').value = 12; } originBonus['Bater'] = 5; originBonus['Brigar'] = 5; break;
-            case 'colegial': if(!isLoading) { document.getElementById('sanidadeMax').value = 12; document.getElementById('itens').value = 'Mochila (+5 de Carga)\nPeso: 0\n\n'; } originBonus['Intuição'] = 5; originBonus['Lábia'] = 5; break;
-            case 'investigador': originBonus['Encontrar'] = 5; originBonus['AnalisarAmbiente'] = 5; break;
-            case 'defesa_civil': if(!isLoading) document.getElementById('itens').value = 'Revolver (Dano: 1d6+3)\nPeso: 1.5\n\n3x Pacotes de Bala (4 balas cada)\nPeso: 0.3\n\n'; originBonus['Brigar'] = 5; break;
-            case 'cientista': originBonus['Ciência'] = 5; originBonus['Sobrevivência'] = 5; break;
-            case 'sobrevivente': originBonus['Sobrevivência'] = 15; originBonus['Intuição'] = 5; if(!isLoading) document.getElementById('itens').value = 'Itens de acampamento\nPeso: 2\n\n'; break;
-            case 'artista_escritor': originBonus['Intuição'] = 15; originBonus['Enganação'] = 5; break;
+            case 'agente_medico': 
+                if(!isLoading) sanidadeMax.value = (parseInt(sanidadeMax.value) || 16) + 3; 
+                originBonus['Medicina'] = 5; originBonus['Intuição'] = 5; 
+                momentoContent.innerHTML = '<p>Bônus: Não perde sanidade ao ver corpos. +3 Sanidade Máx.</p>';
+                momentoPanel.classList.remove('hidden');
+                break;
+            case 'lutador': 
+                if(!isLoading) { 
+                    vidaMax.value = (parseInt(vidaMax.value) || 12) + 7; 
+                    esforcoMax.value = (parseInt(esforcoMax.value) || 20) + 10; 
+                } 
+                originBonus['Bater'] = 5; originBonus['Brigar'] = 5; 
+                momentoContent.innerHTML = '<p>Bônus: +7 Vida Máx, +10 Esforço Máx.</p>';
+                momentoPanel.classList.remove('hidden');
+                break;
+            case 'colegial': 
+                if(!isLoading) {
+                    sanidadeMax.value = (parseInt(sanidadeMax.value) || 16) + 2; 
+                    document.getElementById('itens').value = 'Mochila (Carga +5)\nPeso: 0\n\n'; 
+                }
+                originBonus['Intuição'] = 5; originBonus['Lábia'] = 5; 
+                momentoContent.innerHTML = '<p>Bônus: +2 Sanidade Máx, Mochila (+5 Carga).</p>';
+                momentoPanel.classList.remove('hidden');
+                break;
+            case 'investigador': 
+                originBonus['Encontrar'] = 5; originBonus['AnalisarAmbiente'] = 5; 
+                momentoContent.innerHTML = '<p>Bônus: 2x/sessão, pode perguntar ao mestre se há algo de errado na sala (sem rolagem).</p>';
+                momentoPanel.classList.remove('hidden');
+                break;
+            case 'defesa_civil': 
+                if(!isLoading) document.getElementById('itens').value = 'Revólver (Dano: 1d6+3)\nPeso: 1.5\n\n3x Pacotes de Bala (4 balas cada)\nPeso: 0.3\n\n'; 
+                originBonus['Brigar'] = 5; originBonus['Armas'] = 5; 
+                momentoContent.innerHTML = '<p>Bônus: Começa com um revólver e 3 pacotes de bala.</p>';
+                momentoPanel.classList.remove('hidden');
+                break;
+            case 'cientista': 
+                originBonus['Ciencia'] = 5; originBonus['Sobrevivencia'] = 5; 
+                momentoContent.innerHTML = '<p>Bônus: 1x/sessão, pode perguntar ao mestre se há vida em um lugar escuro.</p>';
+                momentoPanel.classList.remove('hidden');
+                break;
+            case 'sobrevivente': 
+                originBonus['Sobrevivencia'] = 15; originBonus['Intuição'] = 5; 
+                momentoContent.innerHTML = '<p>Bônus: +10 em Sobrevivência. Itens de acampamento com mais duração/espaço.</p>';
+                momentoPanel.classList.remove('hidden');
+                break;
+            case 'artista_escritor': originBonus['Intuição'] = 15; originBonus['Enganacao'] = 5; break;
             case 'artista_ator': originBonus['Dança'] = 15; originBonus['Acrobacia'] = 5; break;
-            case 'artista_desenhista': originBonus['Enganação'] = 15; originBonus['Tentação'] = 5; break;
+            case 'artista_desenhista': originBonus['Enganacao'] = 15; originBonus['Tentacao'] = 5; break;
+            case 'artista_musical': originBonus['Dança'] = 15; originBonus['Dispositivos'] = 5; break;
             case 'atleta':
                 originBonus['Brigar'] = 5; originBonus['Atletismo'] = 5;
                 momentoPanel.classList.remove('hidden');
-                momentoPanel.innerHTML += '<button id="forcaPlusBtn" class="primary">Usar Força+ (-10 Esforço)</button><p>Gaste 10 de Esforço para ganhar +15 no seu próximo teste.</p>';
-                document.getElementById('forcaPlusBtn').onclick = () => {
+                momentoContent.innerHTML = '<button id="forcaPlusBtn" class="primary">Usar Força+ (-10 Esforço)</button><p>Gaste 10 de Esforço para ganhar +15 no seu próximo teste.</p>';
+                momentoContent.querySelector('#forcaPlusBtn').onclick = () => {
                     const esforco = document.getElementById('esforco');
                     if (parseInt(esforco.value) >= 10) { esforco.value -= 10; tempBonus = {value: 15, type: 'any'}; alert('Força+ ativado! Seu próximo teste terá +15.'); updateAllBars(); }
                     else { alert('Pontos de Esforço insuficientes!'); }
                 };
                 break;
             case 'noia':
-                originBonus['Enganação'] = 15; originBonus['Furtividade'] = 5;
+                originBonus['Enganacao'] = 15; originBonus['Furtividade'] = 5;
                 momentoPanel.classList.remove('hidden');
-                momentoPanel.innerHTML += '<button id="fugaBtn" class="primary">Usar Fuga (-10 Esforço)</button><p>Gaste 10 de Esforço para ganhar +25 no seu próximo teste de Agilidade ou Acrobacia.</p>';
-                document.getElementById('fugaBtn').onclick = () => {
+                momentoContent.innerHTML = '<button id="fugaBtn" class="primary">Usar Fuga (-10 Esforço)</button><p>Gaste 10 de Esforço para ganhar +25 no seu próximo teste de Agilidade ou Acrobacia (em perseguição).</p>';
+                momentoContent.querySelector('#fugaBtn').onclick = () => {
                     const esforco = document.getElementById('esforco');
                     if (parseInt(esforco.value) >= 10) { esforco.value -= 10; tempBonus = {value: 25, type: 'agilidade'}; alert('Fuga ativada! Seu próximo teste de Agilidade ou Acrobacia terá +25.'); updateAllBars(); }
                     else { alert('Pontos de Esforço insuficientes!'); }
                 };
+                break;
+            case 'morador_de_rua':
+                originBonus['Sobrevivencia'] = 5; originBonus['Brigar'] = 5;
+                momentoContent.innerHTML = '<p>Bônus: Pode criar itens com materiais "possíveis" (a critério do Mestre).</p>';
+                momentoPanel.classList.remove('hidden');
+                break;
+            case 'traumatizado':
+                originBonus['Sanidade'] = 25; originBonus['Reflexos'] = 5;
+                momentoContent.innerHTML = '<p>Bônus: NUNCA falha em testes de sanidade. Dano de sanidade reduzido em -2.</p>';
+                momentoPanel.classList.remove('hidden');
+                break;
+            case 'jornalista':
+                originBonus['AnalisarAmbiente'] = 5; originBonus['Lábia'] = 5;
+                momentoContent.innerHTML = '<p>Bônus: 2x/sessão, ao gravar e revisar uma área, ganha +20 em Analisar Ambiente.</p>';
+                momentoPanel.classList.remove('hidden');
+                break;
+            case 'engenheiro':
+                originBonus['Ciencia'] = 5; originBonus['AnalisarAmbiente'] = 5;
+                momentoContent.innerHTML = '<p>Bônus: 3x/sessão, pode construir um item em 30 min. +5 em Analisar Ambiente (engenharia).</p>';
+                momentoPanel.classList.remove('hidden');
+                break;
+            case 'bebado':
+                originBonus['Alcool'] = 5; originBonus['Lábia'] = 5; // Lábia por Presença
+                momentoPanel.classList.remove('hidden');
+                momentoContent.innerHTML = '<p>Bônus: Se beber, atributos +20. 1x/sessão, pode usar "Eu conheço aquele cara!" em um NPC.</p>';
+                break;
+            case 'ti':
+                originBonus['Dispositivos'] = 15; originBonus['Falsificar'] = 5;
+                momentoContent.innerHTML = '<p>Bônus: No PC, gaste 30% bateria e 3 PE para acessar arquivo confidencial.</p>';
+                momentoPanel.classList.remove('hidden');
                 break;
         }
         if (!isLoading) updateAllBars();
@@ -1068,6 +1507,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('closeAlteracoesModalBtn').addEventListener('click',() => {document.getElementById('alteracoesModal').style.display='none';});
     document.getElementById('changelog-icon').addEventListener('click',() => {document.getElementById('changelogModal').style.display='flex';});
     document.getElementById('closeChangelogModalBtn').addEventListener('click',() => {document.getElementById('changelogModal').style.display='none';});
+    document.getElementById('rules-icon').addEventListener('click', () => {document.getElementById('rulesModal').style.display='flex';});
+    document.getElementById('closeRulesModalBtn').addEventListener('click',() => {document.getElementById('rulesModal').style.display='none';});
     document.getElementById('createMesaBtn').addEventListener('click',() => {const p=prompt("Crie uma senha para a mesa:");if(p&&auth.currentUser){const mR=db.ref(`mesa/${auth.currentUser.uid}`);mR.set({password:p,mapUrl:'',tokens:{}});window.open(`mesa.html?masterId=${auth.currentUser.uid}`,'_blank');}else if(p){alert("Você precisa estar logado como mestre.");}});
     document.getElementById('joinMesaBtn').addEventListener('click',() => {const mE=prompt("Qual o email do mestre?");if(!mE)return;const p=prompt("Qual a senha da mesa?");if(!p)return;db.ref('users').once('value',(s)=>{let mU=null;if(s.exists()){s.forEach((c)=>{if(c.val().email&&c.val().email.toLowerCase()===mE.toLowerCase().trim()){mU=c.key;}});}if(!mU){alert("Mestre não encontrado.");return;}db.ref(`mesa/${mU}/password`).once('value',(pS)=>{if(pS.exists()&&pS.val()===p){window.open(`mesa.html?masterId=${mU}`,'_blank');}else{alert("Senha incorreta ou mesa não criada.");}});});});
     document.getElementById('send-chat-btn').addEventListener('click', sendChatMessage);
@@ -1082,6 +1523,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('origem').addEventListener('change', (e) => applyOriginEffects(e.target.value));
     document.getElementById('agirJogadoresBtn').addEventListener('click', openInitiativeModal);
     document.getElementById('startInitiativeBtn').addEventListener('click', startInitiative);
+
+    // Event listener for the new skill search bar
+    document.getElementById('periciaSearch').addEventListener('keyup', criarPericias);
 
     const initiativeAction = (action) => {
         const initiativeRef = db.ref(`initiative/${currentUser.uid}`);
